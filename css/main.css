@@ -1,0 +1,50 @@
+body {
+  background: white;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Poppins, sans-serif;
+}
+
+.logo {
+  font-size: 3.5rem;
+  font-weight: 600;
+}
+
+.f { color: #ff7a00; }
+
+.rest {
+  max-width: 0;
+  overflow: hidden;
+  display: inline-block;
+  opacity: 0;
+  transition: 1s ease;
+}
+
+.logo.active .rest {
+  max-width: 500px;
+  opacity: 1;
+}
+
+.actions {
+  margin-top: 30px;
+  opacity: 0;
+  transition: .8s;
+}
+
+.actions.show { opacity: 1; }
+
+.actions a {
+  background: #ff7a00;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 30px;
+  margin: 0 10px;
+  text-decoration: none;
+}
+.actions .outline {
+  background: none;
+  border: 2px solid #ff7a00;
+  color: #ff7a00;
+}
