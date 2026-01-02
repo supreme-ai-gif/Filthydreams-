@@ -1,13 +1,25 @@
-import { supabase } from "./supabase.js";
+async function saveProfile() {
+  const user = JSON.parse(localStorage.getItem("user"));
 
-saveProfile.onclick = async () => {
-  const userId = localStorage.getItem("user");
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const country = document.getElementById("country").value;
 
-  await supabase.from("users").update({
-    name: name.value,
-    country: country.value,
-    email: email.value
-  }).eq("id", userId);
+  const { error } = await supabase
+    .from("users")
+    .update({ name, email, country })
+    .eq("id", user.id);
 
-  location.href = "store.html";
-};
+  if (error) {
+    alert("Failed to save profile");
+    return;
+  }
+
+  // Update local storage
+  user.name = name;
+  user.email = email;
+  user.country = country;
+  localStorage.setItem("user", JSON.stringify(user));
+
+  window.location.href = "store.html";
+}
