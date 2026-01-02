@@ -4,9 +4,17 @@ const supabase = supabase.createClient(
 );
 
 async function login() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
 
+  // 🟥 ADMIN LOGIN CHECK (FIRST)
+  if (username === "admin" && password === "1234") {
+    localStorage.setItem("isAdmin", "true");
+    window.location.href = "admin/admin.html";
+    return;
+  }
+
+  // 🟩 NORMAL USER LOGIN
   const { data, error } = await supabase
     .from("users")
     .select("*")
@@ -15,17 +23,17 @@ async function login() {
     .single();
 
   if (error || !data) {
-    alert("Invalid login");
+    alert("Invalid username or password");
     return;
   }
 
-  // Save user session
   localStorage.setItem("user", JSON.stringify(data));
+  localStorage.removeItem("isAdmin");
 
-  // 🔴 PROFILE CHECK
+  // 🔍 PROFILE CHECK
   if (!data.name || !data.email || !data.country) {
-    window.location.href = "profile.html"; // setup page
+    window.location.href = "profile.html";
   } else {
-    window.location.href = "store.html"; // main store
+    window.location.href = "store.html";
   }
 }
