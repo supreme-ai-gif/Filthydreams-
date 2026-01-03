@@ -5,15 +5,17 @@ const supabase = createClient(
   window.__ENV__.SUPABASE_ANON_KEY
 );
 
-export async function register() {
+const registerBtn = document.getElementById("registerBtn");
+registerBtn.addEventListener("click", async () => {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  const { error } = await supabase
-    .from("users")
-    .insert([{ username, password }]);
+  if (!username || !password) return alert("Enter username and password");
 
-  if (error) return alert("Username already exists");
-  alert("Registered! Login now");
+  const { error } = await supabase.from("users").insert([{ username, password }]);
+
+  if (error) return alert("Username already exists or failed: " + error.message);
+
+  alert("Registered successfully! Redirecting to login...");
   window.location.href = "login.html";
-}
+});
