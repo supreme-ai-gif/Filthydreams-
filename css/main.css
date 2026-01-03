@@ -202,3 +202,128 @@ button {
 }
 .admin-actions button:hover { opacity:0.9; }
 #adminContent { max-width:1200px; margin:20px auto; }
+/* 🟧 TOP BAR */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  flex: 1;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.logo span {
+  color: orange;
+}
+
+.menu-btn {
+  font-size: 22px;
+  background: none;
+  border: none;
+}
+
+.search {
+  padding: 6px 10px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+}
+
+/* 🟧 SIDE MENU */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 70%;
+  height: 100%;
+  background: white;
+  transition: 0.3s ease;
+  z-index: 20;
+  box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+}
+
+.side-menu.show {
+  left: 0;
+}
+
+.side-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+}
+
+.side-menu nav a {
+  display: block;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  text-decoration: none;
+  color: black;
+}
+
+/* 🟧 HERO */
+.hero {
+  height: 220px;
+  background: linear-gradient(to right, orange, #ffb347);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* 🟧 TABS */
+.tabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 10px;
+}
+
+.tab {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: none;
+  background: #eee;
+}
+
+.tab.active {
+  background: orange;
+  color: white;
+}
+
+/* 🟧 PRODUCTS */
+.products {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  padding: 15px;
+}
+
+.product-card {
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  padding: 10px;
+}
+
+/* 🟧 SKELETON PLACEHOLDERS */
+.skeleton .img {
+  height: 120px;
+  background: #eee;
+  border-radius: 10px;
+}
+
+.skeleton .info span {
+  display: block;
+  height: 10px;
+  background: #eee;
+  margin-top: 10px;
+  border-radius: 5px;
+   }
