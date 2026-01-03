@@ -5,7 +5,8 @@ const supabase = createClient(
   window.__ENV__.SUPABASE_ANON_KEY
 );
 
-export async function login() {
+const loginBtn = document.getElementById("loginBtn");
+loginBtn.addEventListener("click", async () => {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
 
@@ -33,4 +34,4 @@ export async function login() {
   } else {
     window.location.href = "store.html";
   }
-}
+});
