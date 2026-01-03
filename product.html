@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FilthyDreams | Product</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+
+  <!-- 🟧 TOP BAR -->
+  <header class="topbar">
+    <button class="menu-btn" id="menuBtn">☰</button>
+    <h1 class="logo">Filthy<span>Dreams</span></h1>
+  </header>
+
+  <!-- 🟧 SLIDE MENU -->
+  <aside class="side-menu" id="sideMenu">
+    <div class="side-header">
+      <h2>Menu</h2>
+      <button id="closeMenu">✕</button>
+    </div>
+    <nav>
+      <a href="cart.html">🛒 Cart</a>
+      <a href="account.html">👤 Profile</a>
+      <a href="login.html">🚪 Logout</a>
+    </nav>
+  </aside>
+
+  <!-- 🟧 PRODUCT IMAGE -->
+  <section class="product-image">
+    <img id="productImage" src="" alt="Product Image" />
+  </section>
+
+  <!-- 🟧 PRODUCT INFO -->
+  <section class="product-info">
+    <h2 id="productName">Loading...</h2>
+    <p class="price" id="productPrice"></p>
+    <p class="description" id="productDescription"></p>
+
+    <div class="actions">
+      <button class="add-cart">Add to Cart</button>
+      <button class="buy-now" id="buyNowBtn">Buy Now</button>
+    </div>
+  </section>
+
+  <script src="js/env.js"></script>
+  <script type="module" src="js/product.js"></script>
+</body>
+</html>
