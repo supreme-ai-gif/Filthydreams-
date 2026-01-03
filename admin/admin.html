@@ -1,25 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel - FilthyDreams</title>
-  <link rel="stylesheet" href="../css/main.css">
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard | FilthyDreams</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="../css/main.css" />
+  <link rel="stylesheet" href="admin.css" />
 </head>
 <body>
-  <div id="adminContent">
-    <h2>Welcome Back Admin</h2>
-    <div class="admin-actions">
-      <button id="createTabBtn">Create Tab</button>
-      <button id="postProductBtn">Post Product</button>
-      <button onclick="adminLogout()">Logout</button>
-    </div>
 
-    <div id="tabsContainer"></div>
-    <div id="productsContainer"></div>
-  </div>
+  <!-- 🟧 HEADER -->
+  <header class="admin-header">
+    <h1>Welcome back, <span>Admin</span></h1>
+    <button class="logout" id="logoutBtn">Logout</button>
+  </header>
+
+  <!-- 🟧 DASHBOARD CARDS -->
+  <section class="admin-cards">
+    <div class="card">📦 Products<br><strong id="productCount">0</strong></div>
+    <div class="card">👀 Views<br><strong>—</strong></div>
+    <div class="card">📁 Tabs<br><strong id="tabCount">0</strong></div>
+  </section>
+
+  <!-- 🟧 ACTION BUTTONS -->
+  <section class="admin-actions">
+    <button id="createTabBtn">➕ Create Tab</button>
+    <button id="postProductBtn">📤 Post Product</button>
+    <button id="settingsBtn">⚙️ Account Settings</button>
+  </section>
+
+  <!-- 🟧 DYNAMIC AREA -->
+  <section class="admin-panel" id="adminPanel">
+    <p class="placeholder">Choose an action above</p>
+  </section>
 
   <script src="../js/env.js"></script>
-  <script type="module" src="../js/admin.js"></script>
+  <script type="module" src="admin.js"></script>
 </body>
 </html>
