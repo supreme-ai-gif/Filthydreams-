@@ -5,76 +5,78 @@ const supabase = createClient(
   window.__ENV__.SUPABASE_ANON_KEY
 );
 
+// 🔐 Protect admin
 if (localStorage.getItem("isAdmin") !== "true") {
   window.location.href = "../login.html";
 }
 
-// DOM Elements
-const createTabBtn = document.getElementById("createTabBtn");
-const postProductBtn = document.getElementById("postProductBtn");
-const tabsContainer = document.getElementById("tabsContainer");
-const productsContainer = document.getElementById("productsContainer");
+const panel = document.getElementById("adminPanel");
 
-// ADMIN LOGOUT
-window.adminLogout = function() {
+// Logout
+document.getElementById("logoutBtn").onclick = () => {
   localStorage.removeItem("isAdmin");
   window.location.href = "../login.html";
 };
 
-// CREATE TAB
-createTabBtn.addEventListener("click", async () => {
-  const tabName = prompt("Enter tab name:");
-  if (!tabName) return;
-  const { error } = await supabase.from("tabs").insert([{ name: tabName }]);
-  if (error) return alert("Failed to create tab");
-  alert("Tab created!");
-  loadTabs();
-});
+// Post Product UI
+document.getElementById("postProductBtn").onclick = () => {
+  panel.innerHTML = `
+    <h3>Post Product</h3>
 
-// POST PRODUCT
-postProductBtn.addEventListener("click", async () => {
-  const name = prompt("Product Name:");
-  const description = prompt("Product Description:");
-  const price = prompt("Price:");
-  const image_url = prompt("Image URL:");
-  const tab_id = prompt("Tab ID (leave empty for random):");
-  const buy_link = prompt("Buy Link:");
+    <input type="file" id="productImage" accept="image/*" />
+    <input type="text" id="productName" placeholder="Product name" />
+    <textarea id="productDesc" placeholder="Description"></textarea>
+    <input type="number" id="productPrice" placeholder="Price" />
+    <input type="text" id="buyLink" placeholder="Buy link (URL)" />
 
-  if (!name || !description || !price || !image_url || !buy_link) return alert("All fields required");
+    <button id="submitProduct">Post</button>
+  `;
+
+  document.getElementById("submitProduct").onclick = postProduct;
+};
+
+async function postProduct() {
+  const file = document.getElementById("productImage").files[0];
+  const name = document.getElementById("productName").value;
+  const desc = document.getElementById("productDesc").value;
+  const price = document.getElementById("productPrice").value;
+  const link = document.getElementById("buyLink").value;
+
+  if (!file || !name || !price || !link) {
+    alert("Fill all required fields");
+    return;
+  }
+
+  const ext = file.name.split(".").pop();
+  const fileName = `products/${Date.now()}.${ext}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("products")
+    .upload(fileName, file, { upsert: true });
+
+  if (uploadError) return alert(uploadError.message);
+
+  const { publicURL } = supabase.storage.from("products").getPublicUrl(fileName);
 
   const { error } = await supabase.from("products").insert([{
-    name, description, price, image_url, tab_id: tab_id || null, buy_link, views: 0
+    name,
+    description: desc,
+    price,
+    buy_link: link,
+    image_url: publicURL,
   }]);
 
-  if (error) return alert("Failed to post product");
-  alert("Product posted!");
-  loadProducts();
-});
+  if (error) return alert(error.message);
 
-// LOAD TABS
-async function loadTabs() {
-  const { data } = await supabase.from("tabs").select("*");
-  tabsContainer.innerHTML = "<h3>Tabs:</h3>";
-  data.forEach(t => {
-    const div = document.createElement("div");
-    div.textContent = `${t.id} - ${t.name}`;
-    tabsContainer.appendChild(div);
-  });
+  alert("Product posted successfully!");
 }
 
-// LOAD PRODUCTS
-async function loadProducts() {
-  const { data } = await supabase.from("products").select("*").order("created_at", { ascending: false });
-  productsContainer.innerHTML = "<h3>Products:</h3>";
-  data.forEach(p => {
-    const div = document.createElement("div");
-    div.innerHTML = `
-      <strong>${p.name}</strong> | $${p.price} | Views: ${p.views}
-    `;
-    productsContainer.appendChild(div);
-  });
-}
-
-// INITIAL LOAD
-loadTabs();
-loadProducts();
+// Settings placeholder
+document.getElementById("settingsBtn").onclick = () => {
+  panel.innerHTML = `
+    <h3>Account Settings</h3>
+    <input placeholder="New Username" />
+    <input placeholder="New Password" type="password" />
+    <button>Save (Coming soon)</button>
+  `;
+};
