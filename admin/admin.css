@@ -1,0 +1,60 @@
+.admin-header {
+  padding: 20px;
+  background: orange;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-header span {
+  font-weight: bold;
+}
+
+.logout {
+  background: white;
+  color: orange;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+}
+
+.admin-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  padding: 15px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.admin-actions {
+  display: flex;
+  gap: 10px;
+  padding: 15px;
+}
+
+.admin-actions button {
+  flex: 1;
+  padding: 14px;
+  border-radius: 30px;
+  border: none;
+  background: orange;
+  color: white;
+  font-weight: bold;
+}
+
+.admin-panel {
+  padding: 20px;
+}
+
+.placeholder {
+  text-align: center;
+  color: #888;
+}
