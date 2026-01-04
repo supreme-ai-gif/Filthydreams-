@@ -527,3 +527,28 @@ body {
   text-decoration: none;
   font-weight: bold;
 }
+#logo span {
+  display: inline-block;
+  animation: slideOut 1.5s forwards;
+  opacity: 0;
+}
+
+@keyframes slideOut {
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.landing-buttons button {
+  margin: 12px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff9f1a, #ffb347);
+  color: #000;
+  transition: 0.2s;
+}
+.landing-buttons button:hover { transform: scale(1.05); }
