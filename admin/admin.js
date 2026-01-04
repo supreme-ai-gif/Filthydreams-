@@ -9,62 +9,78 @@ if (localStorage.getItem("isAdmin") !== "true") {
   location.href = "../login.html";
 }
 
-const panel = document.getElementById("adminPanel");
 const adminTabs = document.getElementById("adminTabs");
 const adminProducts = document.getElementById("adminProducts");
+const panel = document.getElementById("adminPanel");
 
-/* ================= LOGOUT ================= */
-document.getElementById("logoutBtn").onclick = () => {
-  localStorage.clear();
-  location.href = "../login.html";
-};
+let currentTabId = null;
 
-/* ================= STATS ================= */
-async function loadStats() {
-  const { data: products } = await supabase.from("products").select("views");
-  const { data: tabs } = await supabase.from("tabs").select("id");
+/* ================= LOAD TABS ================= */
+async function loadTabs() {
+  const { data: tabs } = await supabase.from("tabs").select("*");
 
-  document.getElementById("productCount").textContent = products.length;
-  document.getElementById("tabCount").textContent = tabs.length;
-  document.getElementById("viewCount").textContent =
-    products.reduce((a, b) => a + b.views, 0);
+  adminTabs.innerHTML = "";
+
+  const allBtn = createTabButton("All", null);
+  adminTabs.appendChild(allBtn);
+
+  tabs.forEach(tab => {
+    adminTabs.appendChild(createTabButton(tab.name, tab.id));
+  });
 }
 
-/* ================= TABS ================= */
-async function loadTabs() {
-  const { data } = await supabase.from("tabs").select("*");
-  adminTabs.innerHTML = `<button class="tab active">All</button>`;
+/* ================= TAB BUTTON ================= */
+function createTabButton(name, id) {
+  const btn = document.createElement("button");
+  btn.className = "tab";
+  btn.textContent = name;
 
-  data.forEach(tab => {
-    const btn = document.createElement("button");
-    btn.className = "tab";
-    btn.textContent = tab.name;
+  if (currentTabId === id) btn.classList.add("active");
 
-    btn.onclick = () => loadProducts(tab.id);
+  btn.onclick = () => {
+    currentTabId = id;
+    highlightTabs();
+    loadProducts();
+  };
 
-    let pressTimer;
+  // Long press delete (NOT for All)
+  if (id !== null) {
+    let timer;
     btn.onmousedown = () =>
-      pressTimer = setTimeout(() => deleteTab(tab.id, tab.name), 700);
-    btn.onmouseup = () => clearTimeout(pressTimer);
+      timer = setTimeout(() => deleteTab(id, name), 700);
+    btn.onmouseup = () => clearTimeout(timer);
+  }
 
-    adminTabs.appendChild(btn);
-  });
+  return btn;
+}
+
+/* ================= HIGHLIGHT ================= */
+function highlightTabs() {
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  [...adminTabs.children].find(
+    b => b.textContent === (currentTabId ? b.textContent : "All")
+  )?.classList.add("active");
 }
 
 /* ================= DELETE TAB ================= */
 async function deleteTab(id, name) {
-  if (!confirm(`Delete "${name}" and ALL its products?`)) return;
+  if (!confirm(`Delete "${name}" and ALL products?`)) return;
+
   await supabase.from("products").delete().eq("tab_id", id);
   await supabase.from("tabs").delete().eq("id", id);
+
+  currentTabId = null;
   loadTabs();
   loadProducts();
-  loadStats();
 }
 
-/* ================= PRODUCTS ================= */
-async function loadProducts(tabId = null) {
+/* ================= LOAD PRODUCTS ================= */
+async function loadProducts() {
   let q = supabase.from("products").select("*");
-  if (tabId) q = q.eq("tab_id", tabId);
+
+  if (currentTabId !== null) {
+    q = q.eq("tab_id", currentTabId);
+  }
 
   const { data } = await q;
   adminProducts.innerHTML = "";
@@ -74,55 +90,45 @@ async function loadProducts(tabId = null) {
     card.className = "admin-product";
     card.innerHTML = `
       <img src="${p.image_url}">
-      <div class="info">
+      <div>
         <strong>${p.name}</strong>
-        <span>$${p.price}</span>
+        <small>$${p.price}</small>
         <small>👀 ${p.views}</small>
       </div>
     `;
 
-    let timer;
-    card.onmousedown = () =>
-      timer = setTimeout(() => openEditProduct(p), 700);
-    card.onmouseup = () => clearTimeout(timer);
+    let t;
+    card.onmousedown = () => t = setTimeout(() => openEdit(p), 700);
+    card.onmouseup = () => clearTimeout(t);
 
     adminProducts.appendChild(card);
   });
 }
 
-/* ================= CREATE TAB ================= */
-document.getElementById("createTabBtn").onclick = () => {
-  panel.innerHTML = `
-    <h3>Create Tab</h3>
-    <input id="tabName" placeholder="Tab name">
-    <button id="saveTab">Create</button>
-  `;
+/* ================= POST PRODUCT UI ================= */
+document.getElementById("postProductBtn").onclick = async () => {
+  const { data: tabs } = await supabase.from("tabs").select("*");
 
-  document.getElementById("saveTab").onclick = async () => {
-    if (!tabName.value.trim()) return alert("Enter tab name");
-    await supabase.from("tabs").insert({ name: tabName.value });
-    panel.innerHTML = `<p class="placeholder">Tab created</p>`;
-    loadTabs();
-    loadStats();
-  };
-};
-
-/* ================= POST PRODUCT ================= */
-document.getElementById("postProductBtn").onclick = () => {
   panel.innerHTML = `
     <h3>Post Product</h3>
-    <input type="file" id="img" accept="image/*">
-    <input id="name" placeholder="Product name">
+    <input type="file" id="img">
+    <input id="name" placeholder="Name">
     <textarea id="desc" placeholder="Description"></textarea>
     <input id="price" type="number" placeholder="Price">
     <input id="link" placeholder="Buy link">
-    <button id="post">Post</button>
+
+    <select id="tab">
+      <option value="">All</option>
+      ${tabs.map(t => `<option value="${t.id}">${t.name}</option>`).join("")}
+    </select>
+
+    <button id="post">Post Product</button>
   `;
 
-  document.getElementById("post").onclick = postProduct;
+  post.onclick = postProduct;
 };
 
-/* ================= POST PRODUCT LOGIC ================= */
+/* ================= POST PRODUCT ================= */
 async function postProduct() {
   const file = img.files[0];
   if (!file) return alert("Select image");
@@ -139,16 +145,17 @@ async function postProduct() {
     price: price.value,
     buy_link: link.value,
     image_url: publicURL,
+    tab_id: tab.value || null,
     views: 0
   });
 
-  panel.innerHTML = `<p class="placeholder">Product posted</p>`;
+  alert("✅ Product created successfully");
+  panel.innerHTML = "";
   loadProducts();
-  loadStats();
 }
 
 /* ================= EDIT PRODUCT ================= */
-function openEditProduct(p) {
+function openEdit(p) {
   panel.innerHTML = `
     <h3>Edit Product</h3>
     <input id="name" value="${p.name}">
@@ -167,30 +174,17 @@ function openEditProduct(p) {
       buy_link: link.value
     }).eq("id", p.id);
 
-    loadProducts();
-    loadStats();
     alert("Updated");
+    loadProducts();
   };
 
   del.onclick = async () => {
     if (!confirm("Delete product?")) return;
     await supabase.from("products").delete().eq("id", p.id);
     loadProducts();
-    loadStats();
   };
 }
 
-/* ================= SETTINGS ================= */
-document.getElementById("settingsBtn").onclick = () => {
-  panel.innerHTML = `
-    <h3>Admin Settings</h3>
-    <input placeholder="New username">
-    <input type="password" placeholder="New password">
-    <button>Save (Auth next)</button>
-  `;
-};
-
 /* ================= INIT ================= */
-loadStats();
 loadTabs();
 loadProducts();
