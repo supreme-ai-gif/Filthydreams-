@@ -1,26 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Store</title>
-  <link rel="stylesheet" href="store.css" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <title>Filthy Dreams Store</title>
+  <link rel="stylesheet" href="css/main.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
 <!-- SIDE MENU -->
 <div id="sideMenu" class="side-menu">
   <h2>☰ Menu</h2>
-  <a href="#">Home</a>
-  <a href="#">Trending</a>
-  <a href="#">About</a>
+  <a href="#" id="menuHome">Home</a>
+  <a href="#" id="menuCart">Cart 🛒</a>
+  <a href="#" id="menuProfile">Profile 👤</a>
 </div>
 
 <!-- TOP BAR -->
 <header class="topbar">
   <button id="menuBtn">☰</button>
-  <h1>NeoStore</h1>
-  <input id="searchInput" type="text" placeholder="Search products..." />
+  <h1>Filthy Dreams</h1>
+  <input id="searchInput" type="text" placeholder="Search products...">
+  <div id="authButtons" class="auth-buttons"></div>
 </header>
 
 <!-- TABS -->
@@ -29,7 +30,7 @@
 <!-- PRODUCTS -->
 <main id="products" class="products"></main>
 
-<script type="module" src="../js/env.js"></script>
-<script type="module" src="store.js"></script>
+<script type="module" src="js/env.js"></script>
+<script type="module" src="js/store.js"></script>
 </body>
 </html>
