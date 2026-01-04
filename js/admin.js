@@ -1,5 +1,6 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
+// 🔹 Initialize Supabase
 const supabase = createClient(
   window.__ENV__.SUPABASE_URL,
   window.__ENV__.SUPABASE_ANON_KEY
@@ -20,13 +21,24 @@ document.getElementById("logoutBtn").onclick = () => {
 
 // 🔹 Load Stats
 async function loadStats() {
-  const { data: products } = await supabase.from("products").select("id, views");
-  document.getElementById("productCount").textContent = products?.length || 0;
-  const totalViews = products?.reduce((sum, p) => sum + p.views, 0) || 0;
-  document.querySelector(".card:nth-child(2) strong").textContent = totalViews;
+  try {
+    const { data: products, error: productError } = await supabase
+      .from("products")
+      .select("id, views");
 
-  const { data: tabs } = await supabase.from("tabs").select("*");
-  document.getElementById("tabCount").textContent = tabs?.length || 0;
+    if (productError) throw productError;
+
+    document.getElementById("productCount").textContent = products?.length || 0;
+    const totalViews = products?.reduce((sum, p) => sum + p.views, 0) || 0;
+    document.querySelector(".card:nth-child(2) strong").textContent = totalViews;
+
+    const { data: tabs, error: tabError } = await supabase.from("tabs").select("*");
+    if (tabError) throw tabError;
+
+    document.getElementById("tabCount").textContent = tabs?.length || 0;
+  } catch (err) {
+    console.error("Error loading stats:", err);
+  }
 }
 loadStats();
 
@@ -42,19 +54,19 @@ document.getElementById("createTabBtn").onclick = () => {
     const name = document.getElementById("tabName").value.trim();
     if (!name) return alert("Enter tab name");
 
-    // Insert into Supabase
-    const { data, error } = await supabase.from("tabs").insert([{ name }]);
-    if (error) {
-      console.error(error);
-      alert("Failed to create tab: " + error.message);
-      return;
-    }
+    try {
+      const { data, error } = await supabase.from("tabs").insert([{ name }]);
+      if (error) throw error;
 
-    alert("Tab created successfully!");
-    loadStats(); // reload stats cards
+      alert("Tab created successfully!");
+      loadStats();
+    } catch (err) {
+      console.error("Failed to create tab:", err);
+      alert("Failed to create tab: " + err.message);
+    }
   };
 };
-  
+
 // 🔹 POST PRODUCT
 document.getElementById("postProductBtn").onclick = () => {
   panel.innerHTML = `
@@ -77,56 +89,68 @@ document.getElementById("postProductBtn").onclick = () => {
 
 // 🔹 Load tabs into select dropdown
 async function loadTabsToSelect() {
-  const { data: tabs } = await supabase.from("tabs").select("*");
-  const select = document.getElementById("productTab");
-  if (!tabs) return;
+  try {
+    const { data: tabs, error } = await supabase.from("tabs").select("*");
+    if (error) throw error;
 
-  tabs.forEach(t => {
-    const option = document.createElement("option");
-    option.value = t.id;
-    option.textContent = t.name;
-    select.appendChild(option);
-  });
+    const select = document.getElementById("productTab");
+    if (!tabs) return;
+
+    tabs.forEach(t => {
+      const option = document.createElement("option");
+      option.value = t.id;
+      option.textContent = t.name;
+      select.appendChild(option);
+    });
+  } catch (err) {
+    console.error("Failed to load tabs for select:", err);
+  }
 }
 
 // 🔹 Post Product Logic
 async function postProduct() {
   const file = document.getElementById("productImage").files[0];
-  const name = document.getElementById("productName").value;
-  const desc = document.getElementById("productDesc").value;
-  const price = document.getElementById("productPrice").value;
-  const link = document.getElementById("buyLink").value;
+  const name = document.getElementById("productName").value.trim();
+  const desc = document.getElementById("productDesc").value.trim();
+  const price = document.getElementById("productPrice").value.trim();
+  const link = document.getElementById("buyLink").value.trim();
   const tabId = document.getElementById("productTab").value || null;
 
   if (!file || !name || !price || !link) {
     return alert("Fill all required fields");
   }
 
-  const ext = file.name.split(".").pop();
-  const fileName = `products/${Date.now()}.${ext}`;
+  try {
+    // Upload to Supabase storage
+    const ext = file.name.split(".").pop();
+    const fileName = `products/${Date.now()}.${ext}`;
+    const { error: uploadError } = await supabase.storage
+      .from("products")
+      .upload(fileName, file, { upsert: true });
 
-  // Upload to Supabase storage
-  const { error: uploadError } = await supabase.storage
-    .from("products")
-    .upload(fileName, file, { upsert: true });
+    if (uploadError) throw uploadError;
 
-  if (uploadError) return alert(uploadError.message);
+    const { publicURL } = supabase.storage.from("products").getPublicUrl(fileName);
 
-  const { publicURL } = supabase.storage.from("products").getPublicUrl(fileName);
+    // Insert product into table
+    const { error } = await supabase.from("products").insert([{
+      name,
+      description: desc,
+      price,
+      buy_link: link,
+      image_url: publicURL,
+      tab_id: tabId,
+      views: 0
+    }]);
 
-  const { error } = await supabase.from("products").insert([{
-    name,
-    description: desc,
-    price,
-    buy_link: link,
-    image_url: publicURL,
-    tab_id: tabId
-  }]);
+    if (error) throw error;
 
-  if (error) return alert(error.message);
-
-  alert("Product posted successfully!");
-  loadStats();
+    alert("Product posted successfully!");
+    loadStats();
+  } catch (err) {
+    console.error("Failed to post product:", err);
+    alert("Failed to post product: " + err.message);
+  }
 }
 
 // 🔹 Account Settings Placeholder
