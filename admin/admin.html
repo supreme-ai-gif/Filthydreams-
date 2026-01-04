@@ -1,50 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>FilthyDreams Admin</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./admin.css">
+<meta charset="UTF-8">
+<title>FilthyDreams Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="./admin.css">
 </head>
 <body>
 
-  <!-- TOP BAR -->
-  <header class="admin-header">
-    <div class="brand">
-      <div class="logo">F</div>
-      <div class="name">
-        <h1>FilthyDreams</h1>
-        <small>Admin Dashboard</small>
-      </div>
+<header class="admin-header">
+  <div class="brand">
+    <div class="logo">F</div>
+    <div class="name">
+      <h1>FilthyDreams</h1>
+      <small>Admin Dashboard</small>
     </div>
-    <button id="logoutBtn" class="btn ghost">Logout</button>
-  </header>
+  </div>
+  <button id="logoutBtn" class="btn ghost">Logout</button>
+</header>
 
-  <!-- ACTIONS -->
-  <section class="admin-actions">
-    <button id="createTabBtn" class="btn primary">+ Create Tab</button>
-    <button id="postProductBtn" class="btn primary">+ Post Product</button>
-    <button id="settingsBtn" class="btn outline">Account</button>
+<section class="admin-actions">
+  <button id="createTabBtn" class="btn primary">+ Create Tab</button>
+  <button id="postProductBtn" class="btn primary">+ Post Product</button>
+  <button id="settingsBtn" class="btn outline">Account</button>
+</section>
+
+<nav class="admin-tabs" id="adminTabs"></nav>
+
+<main class="admin-main">
+  <section class="admin-products" id="adminProducts">
+    <p class="muted">No products to display</p>
   </section>
+  <aside class="admin-panel" id="adminPanel">
+    <p class="muted">Select an action</p>
+  </aside>
+</main>
 
-  <!-- TABS -->
-  <nav class="admin-tabs" id="adminTabs">
-    <!-- Tabs injected here dynamically -->
-  </nav>
-
-  <!-- MAIN LAYOUT -->
-  <main class="admin-main">
-    <section class="admin-products" id="adminProducts">
-      <p class="muted">No products to display</p>
-    </section>
-
-    <aside class="admin-panel" id="adminPanel">
-      <p class="muted">Select an action</p>
-    </aside>
-  </main>
-
-  <!-- ENV + LOGIC -->
-  <script src="./env.js"></script>
-  <script type="module" src="./admin.js"></script>
+<script src="./env.js"></script>
+<script type="module" src="./admin.js"></script>
 </body>
 </html>
