@@ -2,89 +2,76 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 document.addEventListener("DOMContentLoaded", async () => {
 
+  /* ================= ENV ================= */
   const SUPABASE_URL = window.__ENV__.SUPABASE_URL;
   const SUPABASE_ANON_KEY = window.__ENV__.SUPABASE_ANON_KEY;
-
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // check if admin
+  /* ================= AUTH CHECK ================= */
   if (localStorage.getItem("isAdmin") !== "true") {
     alert("Not authorized");
     location.href = "../login.html";
+    return;
   }
 
+  /* ================= DOM ================= */
   const adminTabs = document.getElementById("adminTabs");
   const adminProducts = document.getElementById("adminProducts");
   const panel = document.getElementById("adminPanel");
 
   let currentTab = "all";
 
-  // --- LOGOUT ---
-  document.getElementById("logoutBtn").addEventListener("click", () => {
+  /* ================= LOGOUT ================= */
+  document.getElementById("logoutBtn").onclick = () => {
     localStorage.clear();
     location.href = "../login.html";
-  });
+  };
 
-  // --- LOAD TABS ---
+  /* ================= LOAD TABS ================= */
   async function loadTabs() {
-    const { data: tabs, error } = await supabase.from("tabs").select("*");
-    if (error) { console.error(error); return; }
+    const { data: tabs, error } = await supabase.from("tabs").select("*").order("created_at");
+    if (error) return console.error(error);
 
     adminTabs.innerHTML = "";
     renderTab("All", "all");
+
     tabs.forEach(tab => renderTab(tab.name, tab.id));
   }
 
   function renderTab(name, id) {
-  const btn = document.createElement("button");
-  btn.className = "tab";
-  btn.textContent = name;
-  btn.dataset.id = id;
+    const btn = document.createElement("button");
+    btn.className = "tab";
+    btn.textContent = name;
+    btn.dataset.id = id;
 
-  if (currentTab === id) btn.classList.add("active");
+    if (currentTab === id) btn.classList.add("active");
 
-  btn.addEventListener("click", () => {
-    currentTab = id;
-    highlightTabs();
-    loadProducts();
-  });
+    btn.onclick = () => {
+      currentTab = id;
+      highlightTabs();
+      loadProducts();
+    };
 
-  // long press delete
-  if (id !== "all") {
-    let timer;
-    btn.addEventListener("mousedown", () => {
-      timer = setTimeout(() => deleteTab(id, name), 700);
-    });
-    btn.addEventListener("mouseup", () => clearTimeout(timer));
-    btn.addEventListener("mouseleave", () => clearTimeout(timer));
-  }
-
-  adminTabs.appendChild(btn);
-  }
-      
-      
-      
-// long press to delete (only for non-All tabs)
+    // long press delete
     if (id !== "all") {
       let timer;
-      btn.addEventListener("mousedown", () => timer = setTimeout(() => deleteTab(id, name), 700));
-      btn.addEventListener("mouseup", () => clearTimeout(timer));
-      btn.addEventListener("mouseleave", () => clearTimeout(timer));
+      btn.onmousedown = () => {
+        timer = setTimeout(() => deleteTab(id, name), 700);
+      };
+      btn.onmouseup = btn.onmouseleave = () => clearTimeout(timer);
     }
 
     adminTabs.appendChild(btn);
   }
 
-  
   function highlightTabs() {
     document.querySelectorAll(".tab").forEach(tab => {
       tab.classList.toggle("active", tab.dataset.id === currentTab);
     });
   }
 
-
   async function deleteTab(id, name) {
-    if (!confirm(`Delete "${name}" tab and all its products?`)) return;
+    if (!confirm(`Delete "${name}" and all products inside it?`)) return;
     await supabase.from("products").delete().eq("tab_id", id);
     await supabase.from("tabs").delete().eq("id", id);
     currentTab = "all";
@@ -92,13 +79,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadProducts();
   }
 
-  // --- LOAD PRODUCTS ---
+  /* ================= LOAD PRODUCTS ================= */
   async function loadProducts() {
-    let query = supabase.from("products").select("*");
+    adminProducts.innerHTML = `<p class="muted">Loading...</p>`;
+
+    let query = supabase.from("products").select("*").order("created_at", { ascending: false });
     if (currentTab !== "all") query = query.eq("tab_id", currentTab);
 
     const { data, error } = await query;
-    if (error) { console.error(error); return; }
+    if (error) return console.error(error);
 
     adminProducts.innerHTML = "";
     if (!data || data.length === 0) {
@@ -110,7 +99,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const card = document.createElement("div");
       card.className = "product-card";
       card.innerHTML = `
-        <img src="${p.image_url}" alt="${p.name}">
+        <img src="${p.image_url}">
         <div class="info">
           <h4>${p.name}</h4>
           <span>$${p.price}</span>
@@ -118,36 +107,36 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
       `;
 
-      // long press for edit/delete
-      let hold;
-      card.addEventListener("mousedown", () => hold = setTimeout(() => editProduct(p), 700));
-      card.addEventListener("mouseup", () => clearTimeout(hold));
-      card.addEventListener("mouseleave", () => clearTimeout(hold));
+      let timer;
+      card.onmousedown = () => timer = setTimeout(() => openEditProduct(p), 700);
+      card.onmouseup = card.onmouseleave = () => clearTimeout(timer);
 
       adminProducts.appendChild(card);
     });
   }
 
-  // --- CREATE TAB ---
-  document.getElementById("createTabBtn").addEventListener("click", () => {
+  /* ================= CREATE TAB ================= */
+  document.getElementById("createTabBtn").onclick = () => {
     panel.innerHTML = `
       <h3>Create Tab</h3>
       <input id="tabName" placeholder="Tab name">
-      <button class="btn primary" id="saveTabBtn">Create</button>
+      <button class="btn primary" id="saveTab">Create</button>
     `;
-    document.getElementById("saveTabBtn").addEventListener("click", async () => {
+
+    document.getElementById("saveTab").onclick = async () => {
       const name = document.getElementById("tabName").value.trim();
       if (!name) return alert("Enter tab name");
+
       await supabase.from("tabs").insert({ name });
-      alert("Tab created");
       panel.innerHTML = `<p class="muted">Select an action</p>`;
       await loadTabs();
-    });
-  });
+    };
+  };
 
-  // --- POST PRODUCT ---
-  document.getElementById("postProductBtn").addEventListener("click", async () => {
+  /* ================= POST PRODUCT ================= */
+  document.getElementById("postProductBtn").onclick = async () => {
     const { data: tabs } = await supabase.from("tabs").select("*");
+
     panel.innerHTML = `
       <h3>Post Product</h3>
       <input type="file" id="img">
@@ -161,18 +150,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       </select>
       <button class="btn primary" id="postBtn">Post</button>
     `;
-    document.getElementById("postBtn").addEventListener("click", postProduct);
-  });
+
+    document.getElementById("postBtn").onclick = postProduct;
+  };
 
   async function postProduct() {
     const file = document.getElementById("img").files[0];
-    if (!file) return alert("Select image");
+    if (!file) return alert("Select an image");
 
-    const path = `products/${Date.now()}-${file.name}`;
-    const { error: uploadError } = await supabase.storage.from("products").upload(path, file);
-    if (uploadError) { console.error(uploadError); return alert("Upload failed"); }
+    const filePath = `${Date.now()}-${file.name}`;
+    const { error: uploadError } = await supabase.storage.from("products").upload(filePath, file);
+    if (uploadError) return alert(uploadError.message);
 
-    const { data: { publicUrl } } = supabase.storage.from("products").getPublicUrl(path);
+    const { data: { publicUrl } } = supabase.storage.from("products").getPublicUrl(filePath);
 
     await supabase.from("products").insert({
       name: document.getElementById("name").value,
@@ -186,11 +176,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     alert("Product posted!");
     panel.innerHTML = `<p class="muted">Select an action</p>`;
-    await loadProducts();
+    loadProducts();
   }
 
-  // --- EDIT PRODUCT ---
-  function editProduct(p) {
+  /* ================= EDIT PRODUCT ================= */
+  function openEditProduct(p) {
     panel.innerHTML = `
       <h3>Edit Product</h3>
       <input id="name" value="${p.name}">
@@ -200,46 +190,52 @@ document.addEventListener("DOMContentLoaded", async () => {
       <button class="btn primary" id="saveBtn">Save</button>
       <button class="btn danger" id="delBtn">Delete</button>
     `;
-    document.getElementById("saveBtn").addEventListener("click", async () => {
+
+    document.getElementById("saveBtn").onclick = async () => {
       await supabase.from("products").update({
         name: document.getElementById("name").value,
         description: document.getElementById("desc").value,
         price: document.getElementById("price").value,
         buy_link: document.getElementById("link").value
       }).eq("id", p.id);
-      alert("Updated");
+
+      alert("Product updated");
       panel.innerHTML = `<p class="muted">Select an action</p>`;
       loadProducts();
-    });
-    document.getElementById("delBtn").addEventListener("click", async () => {
+    };
+
+    document.getElementById("delBtn").onclick = async () => {
       if (!confirm("Delete product?")) return;
       await supabase.from("products").delete().eq("id", p.id);
       panel.innerHTML = `<p class="muted">Select an action</p>`;
       loadProducts();
-    });
+    };
   }
 
-  // --- ACCOUNT SETTINGS ---
-  document.getElementById("settingsBtn").addEventListener("click", async () => {
+  /* ================= ACCOUNT ================= */
+  document.getElementById("settingsBtn").onclick = () => {
     panel.innerHTML = `
       <h3>Admin Account</h3>
       <input id="username" placeholder="New username">
       <input id="password" type="password" placeholder="New password">
-      <button class="btn primary" id="saveAccBtn">Save</button>
+      <button class="btn primary" id="saveAcc">Save</button>
     `;
-    document.getElementById("saveAccBtn").addEventListener("click", async () => {
-      const user = document.getElementById("username").value.trim();
-      const pass = document.getElementById("password").value.trim();
-      if (!user && !pass) return alert("Enter username or password");
-      const updates = {};
-      if (user) updates.username = user;
-      if (pass) updates.password = pass;
-      await supabase.from("admins").update(updates).eq("id", 1);
-      alert("Account updated!");
-    });
-  });
 
-  // --- INITIAL LOAD ---
+    document.getElementById("saveAcc").onclick = async () => {
+      const updates = {};
+      const u = document.getElementById("username").value.trim();
+      const p = document.getElementById("password").value.trim();
+      if (u) updates.username = u;
+      if (p) updates.password = p;
+      if (!u && !p) return alert("Nothing to update");
+
+      await supabase.from("admins").update(updates).eq("id", 1);
+      alert("Account updated");
+    };
+  };
+
+  /* ================= INIT ================= */
   await loadTabs();
   await loadProducts();
+
 });
