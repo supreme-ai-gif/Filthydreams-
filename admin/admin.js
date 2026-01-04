@@ -36,18 +36,35 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function renderTab(name, id) {
-    const btn = document.createElement("button");
-    btn.className = "tab";
-    btn.textContent = name;
-    if (currentTab === id) btn.classList.add("active");
+  const btn = document.createElement("button");
+  btn.className = "tab";
+  btn.textContent = name;
+  btn.dataset.id = id;
 
-    btn.addEventListener("click", () => {
-      currentTab = id;
-      highlightTabs();
-      loadProducts();
+  if (currentTab === id) btn.classList.add("active");
+
+  btn.addEventListener("click", () => {
+    currentTab = id;
+    highlightTabs();
+    loadProducts();
+  });
+
+  // long press delete
+  if (id !== "all") {
+    let timer;
+    btn.addEventListener("mousedown", () => {
+      timer = setTimeout(() => deleteTab(id, name), 700);
     });
+    btn.addEventListener("mouseup", () => clearTimeout(timer));
+    btn.addEventListener("mouseleave", () => clearTimeout(timer));
+  }
 
-    // long press to delete (only for non-All tabs)
+  adminTabs.appendChild(btn);
+  }
+      
+      
+      
+// long press to delete (only for non-All tabs)
     if (id !== "all") {
       let timer;
       btn.addEventListener("mousedown", () => timer = setTimeout(() => deleteTab(id, name), 700));
@@ -58,10 +75,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     adminTabs.appendChild(btn);
   }
 
+  
   function highlightTabs() {
-    document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-    [...adminTabs.children].find(b => b.textContent === (currentTab==="all"?"All":b.textContent))?.classList.add("active");
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.classList.toggle("active", tab.dataset.id === currentTab);
+    });
   }
+
 
   async function deleteTab(id, name) {
     if (!confirm(`Delete "${name}" tab and all its products?`)) return;
