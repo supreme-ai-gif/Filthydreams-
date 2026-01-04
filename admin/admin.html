@@ -6,34 +6,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../css/main.css" />
 </head>
+
 <body class="admin-body">
 
-  <header class="admin-header">
-    <h1>FilthyDreams <span>Admin</span></h1>
-    <button id="logoutBtn">Logout</button>
+  <!-- TOP BAR -->
+  <header class="admin-top">
+    <div class="brand">
+      <span class="logo">F</span>
+      <span class="name">FilthyDreams</span>
+      <small>Admin</small>
+    </div>
+    <button id="logoutBtn" class="ghost-btn">Logout</button>
   </header>
 
+  <!-- ACTIONS -->
   <section class="admin-actions">
-    <button id="createTabBtn">Create Tab</button>
-    <button id="postProductBtn">Post Product</button>
-    <button id="settingsBtn">Account Settings</button>
+    <button id="createTabBtn" class="primary-btn">+ Create Tab</button>
+    <button id="postProductBtn" class="primary-btn">+ Post Product</button>
+    <button id="settingsBtn" class="outline-btn">Account</button>
   </section>
 
+  <!-- TABS -->
   <section class="admin-tabs" id="adminTabs">
-    <!-- Tabs load here -->
+    <!-- dynamic -->
   </section>
 
-  <main class="admin-main">
+  <!-- MAIN -->
+  <main class="admin-layout">
     <section class="admin-products" id="adminProducts">
-      <!-- Products load here -->
+      <!-- products -->
     </section>
 
     <aside class="admin-panel" id="adminPanel">
-      <p class="placeholder">Select an action</p>
+      <p class="muted">Select an action</p>
     </aside>
   </main>
 
-  <!-- ENV MUST COME FIRST -->
   <script src="../js/env.js"></script>
   <script type="module" src="../js/admin.js"></script>
 </body>
