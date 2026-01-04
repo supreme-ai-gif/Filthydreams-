@@ -1,43 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>FilthyDreams Admin</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="admin.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./admin.css">
 </head>
-
-<body class="admin-body">
+<body>
 
   <!-- TOP BAR -->
   <header class="admin-header">
-    <div class="admin-brand">
+    <div class="brand">
       <div class="logo">F</div>
-      <div>
+      <div class="name">
         <h1>FilthyDreams</h1>
         <small>Admin Dashboard</small>
       </div>
     </div>
-
     <button id="logoutBtn" class="btn ghost">Logout</button>
   </header>
 
-  <!-- ACTION BAR -->
+  <!-- ACTIONS -->
   <section class="admin-actions">
-    <button id="createTabBtn" class="btn primary">Create Tab</button>
-    <button id="postProductBtn" class="btn primary">Post Product</button>
+    <button id="createTabBtn" class="btn primary">+ Create Tab</button>
+    <button id="postProductBtn" class="btn primary">+ Post Product</button>
     <button id="settingsBtn" class="btn outline">Account</button>
   </section>
 
-  <!-- TAB NAVIGATION -->
+  <!-- TABS -->
   <nav class="admin-tabs" id="adminTabs">
-    <!-- Tabs injected here -->
+    <!-- Tabs injected here dynamically -->
   </nav>
 
-  <!-- MAIN CONTENT -->
-  <main class="admin-content">
+  <!-- MAIN LAYOUT -->
+  <main class="admin-main">
     <section class="admin-products" id="adminProducts">
-      <!-- Products -->
+      <p class="muted">No products to display</p>
     </section>
 
     <aside class="admin-panel" id="adminPanel">
@@ -45,7 +43,8 @@
     </aside>
   </main>
 
-  <script src="../js/env.js"></script>
-  <script type="module" src="../js/admin.js"></script>
+  <!-- ENV + LOGIC -->
+  <script src="./env.js"></script>
+  <script type="module" src="./admin.js"></script>
 </body>
 </html>
