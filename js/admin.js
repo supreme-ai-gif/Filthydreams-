@@ -1,164 +1,225 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-// 🔹 Initialize Supabase
-const supabase = createClient(
-  window.__ENV__.SUPABASE_URL,
-  window.__ENV__.SUPABASE_ANON_KEY
-);
+document.addEventListener("DOMContentLoaded", async () => {
 
-// 🔐 Protect admin route
-if (localStorage.getItem("isAdmin") !== "true") {
-  window.location.href = "../login.html";
-}
+  const supabase = createClient(
+    window.__ENV__.SUPABASE_URL,
+    window.__ENV__.SUPABASE_ANON_KEY
+  );
 
-const panel = document.getElementById("adminPanel");
-
-// 🔹 Logout
-document.getElementById("logoutBtn").onclick = () => {
-  localStorage.removeItem("isAdmin");
-  window.location.href = "../login.html";
-};
-
-// 🔹 Load Stats
-async function loadStats() {
-  try {
-    const { data: products, error: productError } = await supabase
-      .from("products")
-      .select("id, views");
-
-    if (productError) throw productError;
-
-    document.getElementById("productCount").textContent = products?.length || 0;
-    const totalViews = products?.reduce((sum, p) => sum + p.views, 0) || 0;
-    document.querySelector(".card:nth-child(2) strong").textContent = totalViews;
-
-    const { data: tabs, error: tabError } = await supabase.from("tabs").select("*");
-    if (tabError) throw tabError;
-
-    document.getElementById("tabCount").textContent = tabs?.length || 0;
-  } catch (err) {
-    console.error("Error loading stats:", err);
+  if (localStorage.getItem("isAdmin") !== "true") {
+    location.href = "../login.html";
+    return;
   }
-}
-loadStats();
 
-// 🔹 CREATE TAB
-document.getElementById("createTabBtn").onclick = () => {
-  panel.innerHTML = `
-    <h3>Create New Tab</h3>
-    <input type="text" id="tabName" placeholder="Tab name" />
-    <button id="saveTab">Create</button>
-  `;
+  const adminTabs = document.getElementById("adminTabs");
+  const adminProducts = document.getElementById("adminProducts");
+  const panel = document.getElementById("adminPanel");
 
-  document.getElementById("saveTab").onclick = async () => {
-    const name = document.getElementById("tabName").value.trim();
-    if (!name) return alert("Enter tab name");
+  let currentTabId = "all";
 
-    try {
-      const { data, error } = await supabase.from("tabs").insert([{ name }]);
-      if (error) throw error;
-
-      alert("Tab created successfully!");
-      loadStats();
-    } catch (err) {
-      console.error("Failed to create tab:", err);
-      alert("Failed to create tab: " + err.message);
-    }
+  /* ================= LOGOUT ================= */
+  logoutBtn.onclick = () => {
+    localStorage.clear();
+    location.href = "../login.html";
   };
-};
 
-// 🔹 POST PRODUCT
-document.getElementById("postProductBtn").onclick = () => {
-  panel.innerHTML = `
-    <h3>Post Product</h3>
-    <input type="file" id="productImage" accept="image/*" />
-    <input type="text" id="productName" placeholder="Product name" />
-    <textarea id="productDesc" placeholder="Description"></textarea>
-    <input type="number" id="productPrice" placeholder="Price" />
-    <input type="text" id="buyLink" placeholder="Buy link (URL)" />
-    <select id="productTab">
-      <option value="">-- No Tab / Global --</option>
-    </select>
-    <button id="submitProduct">Post</button>
-  `;
+  /* ================= LOAD TABS ================= */
+  async function loadTabs() {
+    const { data: tabs } = await supabase.from("tabs").select("*");
 
-  loadTabsToSelect();
+    adminTabs.innerHTML = "";
 
-  document.getElementById("submitProduct").onclick = postProduct;
-};
+    renderTab("All", "all");
 
-// 🔹 Load tabs into select dropdown
-async function loadTabsToSelect() {
-  try {
-    const { data: tabs, error } = await supabase.from("tabs").select("*");
-    if (error) throw error;
+    tabs.forEach(tab => renderTab(tab.name, tab.id));
+  }
 
-    const select = document.getElementById("productTab");
-    if (!tabs) return;
+  function renderTab(name, id) {
+    const btn = document.createElement("button");
+    btn.className = "tab-btn";
+    btn.textContent = name;
 
-    tabs.forEach(t => {
-      const option = document.createElement("option");
-      option.value = t.id;
-      option.textContent = t.name;
-      select.appendChild(option);
+    if (currentTabId === id) btn.classList.add("active");
+
+    btn.onclick = () => {
+      currentTabId = id;
+      highlightTabs();
+      loadProducts();
+    };
+
+    if (id !== "all") {
+      let hold;
+      btn.onmousedown = () =>
+        hold = setTimeout(() => deleteTab(id, name), 700);
+      btn.onmouseup = () => clearTimeout(hold);
+    }
+
+    adminTabs.appendChild(btn);
+  }
+
+  function highlightTabs() {
+    document.querySelectorAll(".tab-btn").forEach(b =>
+      b.classList.remove("active")
+    );
+    [...adminTabs.children].find(
+      b => b.textContent ===
+        (currentTabId === "all" ? "All" : b.textContent)
+    )?.classList.add("active");
+  }
+
+  /* ================= DELETE TAB ================= */
+  async function deleteTab(id, name) {
+    if (!confirm(`Delete "${name}" and all its products?`)) return;
+    await supabase.from("products").delete().eq("tab_id", id);
+    await supabase.from("tabs").delete().eq("id", id);
+    currentTabId = "all";
+    loadTabs();
+    loadProducts();
+  }
+
+  /* ================= LOAD PRODUCTS ================= */
+  async function loadProducts() {
+    let q = supabase.from("products").select("*");
+
+    if (currentTabId !== "all") {
+      q = q.eq("tab_id", currentTabId);
+    }
+
+    const { data } = await q;
+    adminProducts.innerHTML = "";
+
+    if (!data.length) {
+      adminProducts.innerHTML = `<p class="muted">No products here</p>`;
+      return;
+    }
+
+    data.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.innerHTML = `
+        <img src="${p.image_url}">
+        <div class="card-info">
+          <h4>${p.name}</h4>
+          <span>$${p.price}</span>
+          <small>👀 ${p.views}</small>
+        </div>
+      `;
+
+      let press;
+      card.onmousedown = () =>
+        press = setTimeout(() => openEdit(p), 700);
+      card.onmouseup = () => clearTimeout(press);
+
+      adminProducts.appendChild(card);
     });
-  } catch (err) {
-    console.error("Failed to load tabs for select:", err);
-  }
-}
-
-// 🔹 Post Product Logic
-async function postProduct() {
-  const file = document.getElementById("productImage").files[0];
-  const name = document.getElementById("productName").value.trim();
-  const desc = document.getElementById("productDesc").value.trim();
-  const price = document.getElementById("productPrice").value.trim();
-  const link = document.getElementById("buyLink").value.trim();
-  const tabId = document.getElementById("productTab").value || null;
-
-  if (!file || !name || !price || !link) {
-    return alert("Fill all required fields");
   }
 
-  try {
-    // Upload to Supabase storage
-    const ext = file.name.split(".").pop();
-    const fileName = `products/${Date.now()}.${ext}`;
-    const { error: uploadError } = await supabase.storage
-      .from("products")
-      .upload(fileName, file, { upsert: true });
+  /* ================= POST PRODUCT ================= */
+  postProductBtn.onclick = async () => {
+    const { data: tabs } = await supabase.from("tabs").select("*");
 
-    if (uploadError) throw uploadError;
+    panel.innerHTML = `
+      <h3>Post Product</h3>
+      <input type="file" id="img">
+      <input id="name" placeholder="Product name">
+      <textarea id="desc" placeholder="Description"></textarea>
+      <input id="price" type="number" placeholder="Price">
+      <input id="link" placeholder="Buy link">
 
-    const { publicURL } = supabase.storage.from("products").getPublicUrl(fileName);
+      <select id="tab">
+        <option value="">All</option>
+        ${tabs.map(t => `<option value="${t.id}">${t.name}</option>`).join("")}
+      </select>
 
-    // Insert product into table
-    const { error } = await supabase.from("products").insert([{
-      name,
-      description: desc,
-      price,
-      buy_link: link,
+      <button class="primary-btn" id="post">Post</button>
+    `;
+
+    post.onclick = postProduct;
+  };
+
+  async function postProduct() {
+    const file = img.files[0];
+    if (!file) return alert("Select image");
+
+    const path = `products/${Date.now()}-${file.name}`;
+    await supabase.storage.from("products").upload(path, file);
+
+    const { publicURL } =
+      supabase.storage.from("products").getPublicUrl(path);
+
+    await supabase.from("products").insert({
+      name: name.value,
+      description: desc.value,
+      price: price.value,
+      buy_link: link.value,
       image_url: publicURL,
-      tab_id: tabId,
+      tab_id: tab.value || null,
       views: 0
-    }]);
+    });
 
-    if (error) throw error;
-
-    alert("Product posted successfully!");
-    loadStats();
-  } catch (err) {
-    console.error("Failed to post product:", err);
-    alert("Failed to post product: " + err.message);
+    alert("Product posted successfully");
+    panel.innerHTML = `<p class="muted">Select an action</p>`;
+    loadProducts();
   }
-}
 
-// 🔹 Account Settings Placeholder
-document.getElementById("settingsBtn").onclick = () => {
-  panel.innerHTML = `
-    <h3>Account Settings</h3>
-    <input placeholder="New Username" />
-    <input placeholder="New Password" type="password" />
-    <button>Save (Coming soon)</button>
-  `;
-};
+  /* ================= EDIT PRODUCT ================= */
+  function openEdit(p) {
+    panel.innerHTML = `
+      <h3>Edit Product</h3>
+      <input id="name" value="${p.name}">
+      <textarea id="desc">${p.description}</textarea>
+      <input id="price" type="number" value="${p.price}">
+      <input id="link" value="${p.buy_link}">
+      <button class="primary-btn" id="save">Save</button>
+      <button class="danger-btn" id="del">Delete</button>
+    `;
+
+    save.onclick = async () => {
+      await supabase.from("products").update({
+        name: name.value,
+        description: desc.value,
+        price: price.value,
+        buy_link: link.value
+      }).eq("id", p.id);
+
+      alert("Updated");
+      loadProducts();
+    };
+
+    del.onclick = async () => {
+      if (!confirm("Delete product?")) return;
+      await supabase.from("products").delete().eq("id", p.id);
+      loadProducts();
+    };
+  }
+
+  /* ================= CREATE TAB ================= */
+  createTabBtn.onclick = () => {
+    panel.innerHTML = `
+      <h3>Create Tab</h3>
+      <input id="tabName" placeholder="Tab name">
+      <button class="primary-btn" id="saveTab">Create</button>
+    `;
+
+    saveTab.onclick = async () => {
+      if (!tabName.value.trim()) return alert("Enter tab name");
+      await supabase.from("tabs").insert({ name: tabName.value });
+      alert("Tab created");
+      loadTabs();
+    };
+  };
+
+  /* ================= SETTINGS ================= */
+  settingsBtn.onclick = () => {
+    panel.innerHTML = `
+      <h3>Account</h3>
+      <p class="muted">Username & password coming next</p>
+    `;
+  };
+
+  /* ================= INIT ================= */
+  await loadTabs();
+  await loadProducts();
+
+});
