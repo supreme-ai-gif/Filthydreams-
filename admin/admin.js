@@ -2,14 +2,25 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-  /* ================= ENV ================= */
+  /* ================= SAFE ENV ================= */
+  if (!window.__ENV__) {
+    alert("env.js not loaded");
+    console.error("env.js missing");
+    return;
+  }
+
   const SUPABASE_URL = window.__ENV__.SUPABASE_URL;
   const SUPABASE_ANON_KEY = window.__ENV__.SUPABASE_ANON_KEY;
+
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    alert("Supabase env variables missing");
+    return;
+  }
+
   const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  /* ================= AUTH CHECK ================= */
+  /* ================= AUTH ================= */
   if (localStorage.getItem("isAdmin") !== "true") {
-    alert("Not authorized");
     location.href = "../login.html";
     return;
   }
@@ -19,23 +30,43 @@ document.addEventListener("DOMContentLoaded", async () => {
   const adminProducts = document.getElementById("adminProducts");
   const panel = document.getElementById("adminPanel");
 
+  const logoutBtn = document.getElementById("logoutBtn");
+  const createTabBtn = document.getElementById("createTabBtn");
+  const postProductBtn = document.getElementById("postProductBtn");
+  const settingsBtn = document.getElementById("settingsBtn");
+
+  if (!adminTabs || !adminProducts || !panel) {
+    console.error("Admin DOM elements missing");
+    return;
+  }
+
   let currentTab = "all";
 
   /* ================= LOGOUT ================= */
-  document.getElementById("logoutBtn").onclick = () => {
+  logoutBtn?.addEventListener("click", () => {
     localStorage.clear();
     location.href = "../login.html";
-  };
+  });
 
-  /* ================= LOAD TABS ================= */
+  /* ================= TABS ================= */
   async function loadTabs() {
-    const { data: tabs, error } = await supabase.from("tabs").select("*").order("created_at");
-    if (error) return console.error(error);
-
     adminTabs.innerHTML = "";
+
+    // Always render ALL tab
     renderTab("All", "all");
 
+    const { data: tabs, error } = await supabase
+      .from("tabs")
+      .select("*")
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      console.error("Tabs error:", error);
+      return;
+    }
+
     tabs.forEach(tab => renderTab(tab.name, tab.id));
+    highlightTabs();
   }
 
   function renderTab(name, id) {
@@ -44,21 +75,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     btn.textContent = name;
     btn.dataset.id = id;
 
-    if (currentTab === id) btn.classList.add("active");
-
-    btn.onclick = () => {
+    btn.addEventListener("click", () => {
       currentTab = id;
       highlightTabs();
       loadProducts();
-    };
+    });
 
-    // long press delete
+    // Long press delete (not All)
     if (id !== "all") {
       let timer;
-      btn.onmousedown = () => {
+      btn.addEventListener("mousedown", () => {
         timer = setTimeout(() => deleteTab(id, name), 700);
-      };
-      btn.onmouseup = btn.onmouseleave = () => clearTimeout(timer);
+      });
+      btn.addEventListener("mouseup", () => clearTimeout(timer));
+      btn.addEventListener("mouseleave", () => clearTimeout(timer));
     }
 
     adminTabs.appendChild(btn);
@@ -71,7 +101,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   async function deleteTab(id, name) {
-    if (!confirm(`Delete "${name}" and all products inside it?`)) return;
+    if (!confirm(`Delete "${name}" and all products?`)) return;
     await supabase.from("products").delete().eq("tab_id", id);
     await supabase.from("tabs").delete().eq("id", id);
     currentTab = "all";
@@ -79,7 +109,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadProducts();
   }
 
-  /* ================= LOAD PRODUCTS ================= */
+  /* ================= PRODUCTS ================= */
   async function loadProducts() {
     adminProducts.innerHTML = `<p class="muted">Loading...</p>`;
 
@@ -87,9 +117,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (currentTab !== "all") query = query.eq("tab_id", currentTab);
 
     const { data, error } = await query;
-    if (error) return console.error(error);
+    if (error) {
+      console.error("Products error:", error);
+      return;
+    }
 
     adminProducts.innerHTML = "";
+
     if (!data || data.length === 0) {
       adminProducts.innerHTML = `<p class="muted">No products</p>`;
       return;
@@ -108,19 +142,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       `;
 
       let timer;
-      card.onmousedown = () => timer = setTimeout(() => openEditProduct(p), 700);
-      card.onmouseup = card.onmouseleave = () => clearTimeout(timer);
+      card.addEventListener("mousedown", () => {
+        timer = setTimeout(() => openEditProduct(p), 700);
+      });
+      card.addEventListener("mouseup", () => clearTimeout(timer));
+      card.addEventListener("mouseleave", () => clearTimeout(timer));
 
       adminProducts.appendChild(card);
     });
   }
 
   /* ================= CREATE TAB ================= */
-  document.getElementById("createTabBtn").onclick = () => {
+  createTabBtn?.addEventListener("click", () => {
     panel.innerHTML = `
       <h3>Create Tab</h3>
       <input id="tabName" placeholder="Tab name">
-      <button class="btn primary" id="saveTab">Create</button>
+      <button id="saveTab" class="btn primary">Create</button>
     `;
 
     document.getElementById("saveTab").onclick = async () => {
@@ -129,12 +166,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       await supabase.from("tabs").insert({ name });
       panel.innerHTML = `<p class="muted">Select an action</p>`;
-      await loadTabs();
+      loadTabs();
     };
-  };
+  });
 
   /* ================= POST PRODUCT ================= */
-  document.getElementById("postProductBtn").onclick = async () => {
+  postProductBtn?.addEventListener("click", async () => {
     const { data: tabs } = await supabase.from("tabs").select("*");
 
     panel.innerHTML = `
@@ -148,21 +185,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         <option value="">All</option>
         ${tabs.map(t => `<option value="${t.id}">${t.name}</option>`).join("")}
       </select>
-      <button class="btn primary" id="postBtn">Post</button>
+      <button id="postBtn" class="btn primary">Post</button>
     `;
 
     document.getElementById("postBtn").onclick = postProduct;
-  };
+  });
 
   async function postProduct() {
     const file = document.getElementById("img").files[0];
-    if (!file) return alert("Select an image");
+    if (!file) return alert("Select image");
 
-    const filePath = `${Date.now()}-${file.name}`;
-    const { error: uploadError } = await supabase.storage.from("products").upload(filePath, file);
+    const path = `${Date.now()}-${file.name}`;
+    const { error: uploadError } = await supabase.storage.from("products").upload(path, file);
     if (uploadError) return alert(uploadError.message);
 
-    const { data: { publicUrl } } = supabase.storage.from("products").getPublicUrl(filePath);
+    const { data: { publicUrl } } = supabase.storage.from("products").getPublicUrl(path);
 
     await supabase.from("products").insert({
       name: document.getElementById("name").value,
@@ -174,7 +211,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       views: 0
     });
 
-    alert("Product posted!");
+    alert("Product posted");
     panel.innerHTML = `<p class="muted">Select an action</p>`;
     loadProducts();
   }
@@ -187,8 +224,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       <textarea id="desc">${p.description}</textarea>
       <input id="price" type="number" value="${p.price}">
       <input id="link" value="${p.buy_link}">
-      <button class="btn primary" id="saveBtn">Save</button>
-      <button class="btn danger" id="delBtn">Delete</button>
+      <button id="saveBtn" class="btn primary">Save</button>
+      <button id="delBtn" class="btn danger">Delete</button>
     `;
 
     document.getElementById("saveBtn").onclick = async () => {
@@ -199,7 +236,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         buy_link: document.getElementById("link").value
       }).eq("id", p.id);
 
-      alert("Product updated");
+      alert("Updated");
       panel.innerHTML = `<p class="muted">Select an action</p>`;
       loadProducts();
     };
@@ -213,12 +250,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   /* ================= ACCOUNT ================= */
-  document.getElementById("settingsBtn").onclick = () => {
+  settingsBtn?.addEventListener("click", () => {
     panel.innerHTML = `
       <h3>Admin Account</h3>
       <input id="username" placeholder="New username">
       <input id="password" type="password" placeholder="New password">
-      <button class="btn primary" id="saveAcc">Save</button>
+      <button id="saveAcc" class="btn primary">Save</button>
     `;
 
     document.getElementById("saveAcc").onclick = async () => {
@@ -232,7 +269,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       await supabase.from("admins").update(updates).eq("id", 1);
       alert("Account updated");
     };
-  };
+  });
 
   /* ================= INIT ================= */
   await loadTabs();
