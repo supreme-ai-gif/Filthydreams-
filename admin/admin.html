@@ -1,40 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Admin Dashboard | FilthyDreams</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="stylesheet" href="../css/main.css" />
-  <link rel="stylesheet" href="admin.css" />
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="../css/main.css">
+  <!-- Admin-specific CSS -->
+  <link rel="stylesheet" href="admin.css">
+
 </head>
 <body>
 
-  <!-- 🟧 HEADER -->
+  <!-- ================= HEADER ================= -->
   <header class="admin-header">
     <h1>Welcome back, <span>Admin</span></h1>
     <button class="logout" id="logoutBtn">Logout</button>
   </header>
 
-  <!-- 🟧 DASHBOARD CARDS -->
+  <!-- ================= STATS CARDS ================= -->
   <section class="admin-cards">
-    <div class="card">📦 Products<br><strong id="productCount">0</strong></div>
-    <div class="card">👀 Views<br><strong>—</strong></div>
-    <div class="card">📁 Tabs<br><strong id="tabCount">0</strong></div>
+    <div class="card">
+      <div class="card-title">📦 Products</div>
+      <strong id="productCount">0</strong>
+    </div>
+    <div class="card">
+      <div class="card-title">👀 Views</div>
+      <strong>0</strong>
+    </div>
+    <div class="card">
+      <div class="card-title">📁 Tabs</div>
+      <strong id="tabCount">0</strong>
+    </div>
   </section>
 
-  <!-- 🟧 ACTION BUTTONS -->
+  <!-- ================= ACTION BUTTONS ================= -->
   <section class="admin-actions">
     <button id="createTabBtn">➕ Create Tab</button>
     <button id="postProductBtn">📤 Post Product</button>
     <button id="settingsBtn">⚙️ Account Settings</button>
   </section>
 
-  <!-- 🟧 DYNAMIC AREA -->
+  <!-- ================= DYNAMIC PANEL ================= -->
   <section class="admin-panel" id="adminPanel">
-    <p class="placeholder">Choose an action above</p>
+    <p class="placeholder">Choose an action above to get started</p>
   </section>
 
+  <!-- ================= SCRIPTS ================= -->
   <script src="../js/env.js"></script>
   <script type="module" src="admin.js"></script>
 </body>
