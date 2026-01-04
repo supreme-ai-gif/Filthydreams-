@@ -39,17 +39,22 @@ document.getElementById("createTabBtn").onclick = () => {
   `;
 
   document.getElementById("saveTab").onclick = async () => {
-    const name = document.getElementById("tabName").value;
+    const name = document.getElementById("tabName").value.trim();
     if (!name) return alert("Enter tab name");
 
-    const { error } = await supabase.from("tabs").insert([{ name }]);
-    if (error) return alert(error.message);
+    // Insert into Supabase
+    const { data, error } = await supabase.from("tabs").insert([{ name }]);
+    if (error) {
+      console.error(error);
+      alert("Failed to create tab: " + error.message);
+      return;
+    }
 
     alert("Tab created successfully!");
-    loadStats();
+    loadStats(); // reload stats cards
   };
 };
-
+  
 // 🔹 POST PRODUCT
 document.getElementById("postProductBtn").onclick = () => {
   panel.innerHTML = `
