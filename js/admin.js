@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const adminProducts = document.getElementById("adminProducts");
   const panel = document.getElementById("adminPanel");
 
-  let currentTabId = "all";
+  let currentTab = "all"; // all | tab_id
 
   /* ================= LOGOUT ================= */
   logoutBtn.onclick = () => {
@@ -32,65 +32,70 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     renderTab("All", "all");
 
-    tabs.forEach(tab => renderTab(tab.name, tab.id));
+    tabs.forEach(tab => {
+      renderTab(tab.name, tab.id);
+    });
   }
 
   function renderTab(name, id) {
     const btn = document.createElement("button");
-    btn.className = "tab-btn";
+    btn.className = "tab";
     btn.textContent = name;
 
-    if (currentTabId === id) btn.classList.add("active");
+    if (currentTab === id) btn.classList.add("active");
 
     btn.onclick = () => {
-      currentTabId = id;
-      highlightTabs();
+      currentTab = id;
+      updateActiveTab();
       loadProducts();
     };
 
+    // Long press delete (except All)
     if (id !== "all") {
-      let hold;
+      let timer;
       btn.onmousedown = () =>
-        hold = setTimeout(() => deleteTab(id, name), 700);
-      btn.onmouseup = () => clearTimeout(hold);
+        timer = setTimeout(() => deleteTab(id, name), 700);
+      btn.onmouseup = () => clearTimeout(timer);
     }
 
     adminTabs.appendChild(btn);
   }
 
-  function highlightTabs() {
-    document.querySelectorAll(".tab-btn").forEach(b =>
-      b.classList.remove("active")
+  function updateActiveTab() {
+    document.querySelectorAll(".tab").forEach(tab =>
+      tab.classList.remove("active")
     );
+
     [...adminTabs.children].find(
-      b => b.textContent ===
-        (currentTabId === "all" ? "All" : b.textContent)
+      b => b.textContent === (currentTab === "all" ? "All" : b.textContent)
     )?.classList.add("active");
   }
 
   /* ================= DELETE TAB ================= */
   async function deleteTab(id, name) {
     if (!confirm(`Delete "${name}" and all its products?`)) return;
+
     await supabase.from("products").delete().eq("tab_id", id);
     await supabase.from("tabs").delete().eq("id", id);
-    currentTabId = "all";
-    loadTabs();
-    loadProducts();
+
+    currentTab = "all";
+    await loadTabs();
+    await loadProducts();
   }
 
   /* ================= LOAD PRODUCTS ================= */
   async function loadProducts() {
-    let q = supabase.from("products").select("*");
+    let query = supabase.from("products").select("*");
 
-    if (currentTabId !== "all") {
-      q = q.eq("tab_id", currentTabId);
+    if (currentTab !== "all") {
+      query = query.eq("tab_id", currentTab);
     }
 
-    const { data } = await q;
+    const { data } = await query;
     adminProducts.innerHTML = "";
 
-    if (!data.length) {
-      adminProducts.innerHTML = `<p class="muted">No products here</p>`;
+    if (!data || data.length === 0) {
+      adminProducts.innerHTML = `<p class="muted">No products</p>`;
       return;
     }
 
@@ -99,7 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       card.className = "product-card";
       card.innerHTML = `
         <img src="${p.image_url}">
-        <div class="card-info">
+        <div class="info">
           <h4>${p.name}</h4>
           <span>$${p.price}</span>
           <small>👀 ${p.views}</small>
@@ -108,12 +113,29 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       let press;
       card.onmousedown = () =>
-        press = setTimeout(() => openEdit(p), 700);
+        press = setTimeout(() => openEditProduct(p), 700);
       card.onmouseup = () => clearTimeout(press);
 
       adminProducts.appendChild(card);
     });
   }
+
+  /* ================= CREATE TAB ================= */
+  createTabBtn.onclick = () => {
+    panel.innerHTML = `
+      <h3>Create Tab</h3>
+      <input id="tabName" placeholder="Tab name">
+      <button class="btn primary" id="saveTab">Create</button>
+    `;
+
+    saveTab.onclick = async () => {
+      if (!tabName.value.trim()) return alert("Enter tab name");
+      await supabase.from("tabs").insert({ name: tabName.value });
+      alert("Tab created");
+      await loadTabs();
+      panel.innerHTML = `<p class="muted">Select an action</p>`;
+    };
+  };
 
   /* ================= POST PRODUCT ================= */
   postProductBtn.onclick = async () => {
@@ -132,7 +154,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         ${tabs.map(t => `<option value="${t.id}">${t.name}</option>`).join("")}
       </select>
 
-      <button class="primary-btn" id="post">Post</button>
+      <button class="btn primary" id="post">Post</button>
     `;
 
     post.onclick = postProduct;
@@ -140,7 +162,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   async function postProduct() {
     const file = img.files[0];
-    if (!file) return alert("Select image");
+    if (!file) return alert("Select an image");
 
     const path = `products/${Date.now()}-${file.name}`;
     await supabase.storage.from("products").upload(path, file);
@@ -158,21 +180,21 @@ document.addEventListener("DOMContentLoaded", async () => {
       views: 0
     });
 
-    alert("Product posted successfully");
+    alert("Product created");
+    await loadProducts();
     panel.innerHTML = `<p class="muted">Select an action</p>`;
-    loadProducts();
   }
 
   /* ================= EDIT PRODUCT ================= */
-  function openEdit(p) {
+  function openEditProduct(p) {
     panel.innerHTML = `
       <h3>Edit Product</h3>
       <input id="name" value="${p.name}">
       <textarea id="desc">${p.description}</textarea>
       <input id="price" type="number" value="${p.price}">
       <input id="link" value="${p.buy_link}">
-      <button class="primary-btn" id="save">Save</button>
-      <button class="danger-btn" id="del">Delete</button>
+      <button class="btn primary" id="save">Save</button>
+      <button class="btn danger" id="del">Delete</button>
     `;
 
     save.onclick = async () => {
@@ -194,32 +216,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
   }
 
-  /* ================= CREATE TAB ================= */
-  createTabBtn.onclick = () => {
-    panel.innerHTML = `
-      <h3>Create Tab</h3>
-      <input id="tabName" placeholder="Tab name">
-      <button class="primary-btn" id="saveTab">Create</button>
-    `;
-
-    saveTab.onclick = async () => {
-      if (!tabName.value.trim()) return alert("Enter tab name");
-      await supabase.from("tabs").insert({ name: tabName.value });
-      alert("Tab created");
-      loadTabs();
-    };
-  };
-
   /* ================= SETTINGS ================= */
   settingsBtn.onclick = () => {
     panel.innerHTML = `
-      <h3>Account</h3>
-      <p class="muted">Username & password coming next</p>
+      <h3>Admin Account</h3>
+      <p class="muted">Username & password logic next</p>
     `;
   };
 
   /* ================= INIT ================= */
   await loadTabs();
   await loadProducts();
-
 });
