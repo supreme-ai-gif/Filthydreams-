@@ -3,52 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FilthyDreams Store</title>
-<link rel="stylesheet" href="./main.css">
+<title>FilthyDreams Admin Dashboard</title>
+<link rel="stylesheet" href="./admin.css">
 </head>
 <body>
 
-<!-- Logo animation at center -->
-<section class="logo-section">
-  <div class="logo-container">
+<!-- HEADER -->
+<header class="admin-header">
+  <div class="brand">
     <div class="logo">F</div>
-    <div class="name">ilthyDreams</div>
-  </div>
-</section>
-
-<!-- Login / Register buttons -->
-<section class="auth-buttons">
-  <button id="loginBtn" class="btn primary">Login</button>
-  <button id="registerBtn" class="btn outline">Register</button>
-</section>
-
-<!-- Main store content (hidden until login) -->
-<main id="storeContent" style="display:none;">
-  <header class="store-header">
-    <div class="search-container">
-      <input type="text" id="searchInput" placeholder="Search products...">
+    <div class="name">
+      <h1>FilthyDreams</h1>
+      <small>Admin Dashboard</small>
     </div>
-    <button id="navBtn" class="btn ghost">☰</button>
-  </header>
+  </div>
+  <button id="logoutBtn" class="btn ghost">Logout</button>
+</header>
 
-  <nav class="side-nav" id="sideNav">
-    <ul>
-      <li id="cartLink">Cart</li>
-      <li id="profileLink">Profile</li>
-      <li id="logoutLink">Logout</li>
-    </ul>
-  </nav>
+<!-- ACTION BUTTONS -->
+<section class="admin-actions">
+  <button id="createTabBtn" class="btn primary">+ Create Tab</button>
+  <button id="postProductBtn" class="btn primary">+ Post Product</button>
+  <button id="settingsBtn" class="btn outline">Account</button>
+</section>
 
-  <section class="tabs" id="storeTabs"></section>
+<!-- TAB NAVIGATION -->
+<nav class="admin-tabs" id="adminTabs">
+  <!-- Tabs will be dynamically loaded here -->
+</nav>
 
-  <section class="products" id="productsGrid">
-    <p class="muted">No products yet</p>
+<!-- MAIN PANEL -->
+<main class="admin-main">
+
+  <!-- PRODUCTS GRID -->
+  <section class="admin-products" id="adminProducts">
+    <p class="muted">Select a tab to view products</p>
   </section>
+
+  <!-- ACTION PANEL (CREATE TAB / POST PRODUCT / EDIT / ACCOUNT) -->
+  <aside class="admin-panel" id="adminPanel">
+    <p class="muted">Select an action above to start</p>
+  </aside>
+
 </main>
 
-<!-- Env.js in js folder -->
-<script src="./js/env.js"></script>
-<script type="module" src="./store.js"></script>
+<!-- ENV: Now in js/env.js -->
+<script src="../js/env.js"></script>
+
+<!-- ADMIN LOGIC -->
+<script type="module" src="./admin.js"></script>
 
 </body>
 </html>
