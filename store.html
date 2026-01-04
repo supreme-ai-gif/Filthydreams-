@@ -2,67 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>FilthyDreams | Store</title>
+  <title>Store</title>
+  <link rel="stylesheet" href="store.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <link rel="stylesheet" href="css/main.css" />
 </head>
 <body>
 
-  <!-- 🟧 TOP BAR -->
-  <header class="topbar">
-    <button class="menu-btn" id="menuBtn">☰</button>
-    <h1 class="logo">Filthy<span>Dreams</span></h1>
-    <input type="text" class="search" placeholder="Search fashion..." />
-  </header>
+<!-- SIDE MENU -->
+<div id="sideMenu" class="side-menu">
+  <h2>☰ Menu</h2>
+  <a href="#">Home</a>
+  <a href="#">Trending</a>
+  <a href="#">About</a>
+</div>
 
-  <!-- 🟧 SLIDE MENU -->
-  <aside class="side-menu" id="sideMenu">
-    <div class="side-header">
-      <h2>Menu</h2>
-      <button id="closeMenu">✕</button>
-    </div>
-    <nav>
-      <a href="cart.html">🛒 Cart</a>
-      <a href="account.html">👤 Profile</a>
-      <a href="login.html">🚪 Logout</a>
-    </nav>
-  </aside>
+<!-- TOP BAR -->
+<header class="topbar">
+  <button id="menuBtn">☰</button>
+  <h1>NeoStore</h1>
+  <input id="searchInput" type="text" placeholder="Search products..." />
+</header>
 
-  <!-- 🟧 HERO SECTION -->
-  <section class="hero">
-    <div class="hero-text">
-      <h2>Wear Your Dreams</h2>
-      <p>Premium street fashion made bold.</p>
-    </div>
-  </section>
+<!-- TABS -->
+<div id="tabs" class="tabs"></div>
 
-  <!-- 🟧 TABS -->
-  <section class="tabs">
-    <button class="tab active">All</button>
-    <button class="tab">Hoodies</button>
-    <button class="tab">Shirts</button>
-    <button class="tab">Limited</button>
-  </section>
+<!-- PRODUCTS -->
+<main id="products" class="products"></main>
 
-  <!-- 🟧 PRODUCTS GRID -->
-  <main class="products">
-
-    <!-- Product Card (Sample / Placeholder) -->
-    <div class="product-card skeleton">
-      <div class="img"></div>
-      <div class="info">
-        <span class="name"></span>
-        <span class="price"></span>
-      </div>
-    </div>
-
-    <div class="product-card skeleton"></div>
-    <div class="product-card skeleton"></div>
-    <div class="product-card skeleton"></div>
-
-  </main>
-
-  <script src="js/store-ui.js"></script>
+<script type="module" src="../js/env.js"></script>
+<script type="module" src="store.js"></script>
 </body>
 </html>
