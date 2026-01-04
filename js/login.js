@@ -1,37 +1,30 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-const supabase = createClient(
-  window.__ENV__.SUPABASE_URL,
-  window.__ENV__.SUPABASE_ANON_KEY
-);
+const supabase = createClient(window.__ENV__.SUPABASE_URL, window.__ENV__.SUPABASE_ANON_KEY);
 
-const loginBtn = document.getElementById("loginBtn");
-loginBtn.addEventListener("click", async () => {
+document.getElementById("loginBtn").onclick = async () => {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  // Admin check
+  if (!username || !password) return alert("Fill all fields");
+
+  // Check if admin
   if (username === "admin" && password === "1234") {
     localStorage.setItem("isAdmin", "true");
-    window.location.href = "admin/admin.html";
+    location.href = "admin.html";
     return;
   }
 
-  const { data, error } = await supabase
+  // Check user
+  const { data: users, error } = await supabase
     .from("users")
     .select("*")
     .eq("username", username)
-    .eq("password", password)
-    .single();
+    .eq("password", password);
 
-  if (error || !data) return alert("Invalid username or password");
+  if (error) return alert(error.message);
+  if (!users || users.length === 0) return alert("Invalid login");
 
-  localStorage.setItem("user", JSON.stringify(data));
-  localStorage.removeItem("isAdmin");
-
-  if (!data.name || !data.email || !data.country) {
-    window.location.href = "profile.html";
-  } else {
-    window.location.href = "store.html";
-  }
-});
+  localStorage.setItem("user", JSON.stringify(users[0]));
+  location.href = "store.html";
+};
