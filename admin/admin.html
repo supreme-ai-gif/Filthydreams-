@@ -10,31 +10,34 @@
 <body class="admin-body">
 
   <!-- TOP BAR -->
-  <header class="admin-top">
-    <div class="brand">
-      <span class="logo">F</span>
-      <span class="name">FilthyDreams</span>
-      <small>Admin</small>
+  <header class="admin-header">
+    <div class="admin-brand">
+      <div class="logo">F</div>
+      <div>
+        <h1>FilthyDreams</h1>
+        <small>Admin Dashboard</small>
+      </div>
     </div>
-    <button id="logoutBtn" class="ghost-btn">Logout</button>
+
+    <button id="logoutBtn" class="btn ghost">Logout</button>
   </header>
 
-  <!-- ACTIONS -->
+  <!-- ACTION BAR -->
   <section class="admin-actions">
-    <button id="createTabBtn" class="primary-btn">+ Create Tab</button>
-    <button id="postProductBtn" class="primary-btn">+ Post Product</button>
-    <button id="settingsBtn" class="outline-btn">Account</button>
+    <button id="createTabBtn" class="btn primary">Create Tab</button>
+    <button id="postProductBtn" class="btn primary">Post Product</button>
+    <button id="settingsBtn" class="btn outline">Account</button>
   </section>
 
-  <!-- TABS -->
-  <section class="admin-tabs" id="adminTabs">
-    <!-- dynamic -->
-  </section>
+  <!-- TAB NAVIGATION -->
+  <nav class="admin-tabs" id="adminTabs">
+    <!-- Tabs injected here -->
+  </nav>
 
-  <!-- MAIN -->
-  <main class="admin-layout">
+  <!-- MAIN CONTENT -->
+  <main class="admin-content">
     <section class="admin-products" id="adminProducts">
-      <!-- products -->
+      <!-- Products -->
     </section>
 
     <aside class="admin-panel" id="adminPanel">
