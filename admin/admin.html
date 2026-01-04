@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>FilthyDreams Admin</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FilthyDreams Admin Dashboard</title>
 <link rel="stylesheet" href="./admin.css">
 </head>
 <body>
 
+<!-- HEADER -->
 <header class="admin-header">
   <div class="brand">
     <div class="logo">F</div>
@@ -19,24 +20,38 @@
   <button id="logoutBtn" class="btn ghost">Logout</button>
 </header>
 
+<!-- ACTION BUTTONS -->
 <section class="admin-actions">
   <button id="createTabBtn" class="btn primary">+ Create Tab</button>
   <button id="postProductBtn" class="btn primary">+ Post Product</button>
   <button id="settingsBtn" class="btn outline">Account</button>
 </section>
 
-<nav class="admin-tabs" id="adminTabs"></nav>
+<!-- TAB NAVIGATION -->
+<nav class="admin-tabs" id="adminTabs">
+  <!-- Tabs will be dynamically loaded here -->
+</nav>
 
+<!-- MAIN PANEL -->
 <main class="admin-main">
+
+  <!-- PRODUCTS GRID -->
   <section class="admin-products" id="adminProducts">
-    <p class="muted">No products to display</p>
+    <p class="muted">Select a tab to view products</p>
   </section>
+
+  <!-- ACTION PANEL (CREATE TAB / POST PRODUCT / EDIT / ACCOUNT) -->
   <aside class="admin-panel" id="adminPanel">
-    <p class="muted">Select an action</p>
+    <p class="muted">Select an action above to start</p>
   </aside>
+
 </main>
 
+<!-- ENV -->
 <script src="./env.js"></script>
+
+<!-- ADMIN LOGIC -->
 <script type="module" src="./admin.js"></script>
+
 </body>
 </html>
