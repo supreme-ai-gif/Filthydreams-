@@ -2,52 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Admin Dashboard | FilthyDreams</title>
+  <title>FilthyDreams Admin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <link rel="stylesheet" href="../css/main.css" />
-  <link rel="stylesheet" href="admin.css" />
 </head>
-<body>
+<body class="admin-body">
 
-<header class="admin-header">
-  <h1>Welcome back, <span>Admin</span></h1>
-  <button id="logoutBtn" class="logout">Logout</button>
-</header>
+  <header class="admin-header">
+    <h1>FilthyDreams <span>Admin</span></h1>
+    <button id="logoutBtn">Logout</button>
+  </header>
 
-<section class="admin-cards">
-  <div class="card">
-    <div class="card-title">📦 Products</div>
-    <strong id="productCount">0</strong>
-  </div>
-  <div class="card">
-    <div class="card-title">👀 Views</div>
-    <strong id="viewCount">0</strong>
-  </div>
-  <div class="card">
-    <div class="card-title">📁 Tabs</div>
-    <strong id="tabCount">0</strong>
-  </div>
-</section>
+  <section class="admin-actions">
+    <button id="createTabBtn">Create Tab</button>
+    <button id="postProductBtn">Post Product</button>
+    <button id="settingsBtn">Account Settings</button>
+  </section>
 
-<section class="admin-actions">
-  <button id="createTabBtn">➕ Create Tab</button>
-  <button id="postProductBtn">📤 Post Product</button>
-  <button id="settingsBtn">⚙️ Account Settings</button>
-</section>
+  <section class="admin-tabs" id="adminTabs">
+    <!-- Tabs load here -->
+  </section>
 
-<!-- ADMIN TABS -->
-<section class="admin-tabs" id="adminTabs"></section>
+  <main class="admin-main">
+    <section class="admin-products" id="adminProducts">
+      <!-- Products load here -->
+    </section>
 
-<!-- PRODUCTS GRID -->
-<section class="admin-products" id="adminProducts"></section>
+    <aside class="admin-panel" id="adminPanel">
+      <p class="placeholder">Select an action</p>
+    </aside>
+  </main>
 
-<!-- DYNAMIC PANEL -->
-<section class="admin-panel" id="adminPanel">
-  <p class="placeholder">Select a tab or product</p>
-</section>
-
-<script src="../js/env.js"></script>
-<script type="module" src="admin.js"></script>
+  <!-- ENV MUST COME FIRST -->
+  <script src="../js/env.js"></script>
+  <script type="module" src="../js/admin.js"></script>
 </body>
 </html>
