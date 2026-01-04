@@ -70,7 +70,24 @@ async function postProduct() {
 
   alert("Product posted successfully!");
 }
+document.getElementById("createTabBtn").onclick = () => {
+  panel.innerHTML = `
+    <h3>Create New Tab</h3>
+    <input type="text" id="tabName" placeholder="Tab name" />
+    <button id="saveTab">Create</button>
+  `;
 
+  document.getElementById("saveTab").onclick = async () => {
+    const name = document.getElementById("tabName").value;
+    if (!name) return alert("Enter tab name");
+
+    const { error } = await supabase.from("tabs").insert([{ name }]);
+    if (error) return alert(error.message);
+
+    alert("Tab created successfully!");
+    loadTabs(); // optional: reload stats
+  };
+};
 // Settings placeholder
 document.getElementById("settingsBtn").onclick = () => {
   panel.innerHTML = `
