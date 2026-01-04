@@ -391,3 +391,139 @@ button {
   color: white;
   font-weight: bold;
 }
+* {
+  box-sizing: border-box;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #05060f, #0b1020);
+  color: #fff;
+}
+
+/* TOP BAR */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
+}
+
+.topbar h1 {
+  flex: 1;
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+
+.topbar input {
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+  background: #121833;
+  color: white;
+}
+
+/* SIDE MENU */
+.side-menu {
+  position: fixed;
+  left: -260px;
+  top: 0;
+  width: 260px;
+  height: 100%;
+  background: #0b1020;
+  padding: 20px;
+  transition: 0.3s ease;
+  z-index: 1000;
+}
+
+.side-menu.open {
+  left: 0;
+}
+
+.side-menu a {
+  display: block;
+  margin: 12px 0;
+  color: #9aa4ff;
+  text-decoration: none;
+}
+
+/* TABS */
+.tabs {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 12px;
+}
+
+.tab {
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: #121833;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.2s;
+}
+
+.tab.active {
+  background: linear-gradient(135deg, #5f6cff, #9aa4ff);
+  color: #000;
+}
+
+/* PRODUCTS */
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+
+.product {
+  background: rgba(255,255,255,0.05);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.product:hover {
+  transform: translateY(-4px);
+}
+
+.product img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.product .info {
+  padding: 12px;
+}
+
+.product h3 {
+  font-size: 15px;
+  margin: 0 0 6px;
+}
+
+.product .price {
+  color: #9aa4ff;
+  font-weight: bold;
+}
+
+.product small {
+  opacity: 0.7;
+}
+
+.product a {
+  display: block;
+  margin-top: 8px;
+  text-align: center;
+  padding: 6px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #5f6cff, #9aa4ff);
+  color: #000;
+  text-decoration: none;
+  font-weight: bold;
+}
