@@ -2,25 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FilthyDreams</title>
+  <title>Filthy Dreams</title>
   <link rel="stylesheet" href="css/main.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
   <div class="landing">
-    <h1 class="logo"><span class="f">F</span><span class="rest">ilthyDreams</span></h1>
-    <div class="actions">
-      <a href="register.html">Register</a>
-      <a href="login.html" class="outline">Login</a>
+    <h1 id="logo">F<span id="logo-rest">ilthy Dreams</span></h1>
+
+    <div class="landing-buttons">
+      <button id="loginBtn">Login</button>
+      <button id="registerBtn">Register</button>
     </div>
   </div>
 
   <script>
-    // Landing animation
-    setTimeout(() => {
-      document.querySelector(".logo").classList.add("active");
-      document.querySelector(".actions").classList.add("show");
-    }, 500);
+    document.getElementById("loginBtn").onclick = () => location.href="login.html";
+    document.getElementById("registerBtn").onclick = () => location.href="register.html";
   </script>
 </body>
 </html>
