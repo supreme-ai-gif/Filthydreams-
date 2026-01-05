@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FilthyDreams Store</title>
+  <link rel="stylesheet" href="./store.css" />
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button id="menuBtn">&#9776;</button>
+    <h1>Filthy<span>Dreams</span></h1>
+    <input type="text" id="searchInput" placeholder="Search products...">
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="profile">
+      <img src="" id="profileAvatar" alt="Profile" class="avatar">
+      <h4 id="profileName">User Name</h4>
+      <small id="profileEmail">email@example.com</small>
+    </div>
+    <ul>
+      <li id="cartBtn">🛒 Cart</li>
+      <li id="accountBtn">👤 Account</li>
+      <li id="logoutBtn">🚪 Logout</li>
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <!-- TABS -->
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-tab="all">All</button>
+    </div>
+
+    <!-- PRODUCTS GRID -->
+    <div class="products-grid" id="productsGrid"></div>
+  </main>
+
+  <script type="module" src="./js/env.js"></script>
+  <script type="module" src="./store.js"></script>
+</body>
+</html>
