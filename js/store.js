@@ -5,72 +5,67 @@ const supabase = createClient(
   window.__ENV__.SUPABASE_ANON_KEY
 );
 
-const tabsEl = document.getElementById("tabs");
-const productsEl = document.getElementById("products");
+const tabsDiv = document.getElementById("tabs");
+const productsDiv = document.getElementById("products");
 const searchInput = document.getElementById("searchInput");
+const sidebar = document.getElementById("sidebar");
 const menuBtn = document.getElementById("menuBtn");
-const sideMenu = document.getElementById("sideMenu");
-const logoutBtn = document.getElementById("logoutBtn");
 
 let currentTab = "all";
-let products = [];
+let allProducts = [];
 
-/* AUTH */
-logoutBtn.onclick = () => {
-  localStorage.clear();
-  location.href = "login.html";
-};
-
-/* MENU */
-menuBtn.onclick = () => sideMenu.classList.toggle("open");
+/* MOBILE MENU */
+menuBtn.onclick = () => sidebar.classList.toggle("show");
 
 /* LOAD TABS */
 async function loadTabs() {
+  tabsDiv.innerHTML = "";
+  createTab("All", "all");
+
   const { data } = await supabase.from("tabs").select("*");
-  tabsEl.innerHTML = "";
-  addTab("All", "all");
-  data.forEach(t => addTab(t.name, t.id));
+  data.forEach(t => createTab(t.name, t.id));
 }
 
-function addTab(name, id) {
-  const el = document.createElement("div");
-  el.className = "tab";
-  el.textContent = name;
-  if (currentTab === id) el.classList.add("active");
+function createTab(name, id) {
+  const div = document.createElement("div");
+  div.className = "tab";
+  div.textContent = name;
+  if (currentTab === id) div.classList.add("active");
 
-  el.onclick = () => {
+  div.onclick = () => {
     currentTab = id;
     document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-    el.classList.add("active");
+    div.classList.add("active");
     renderProducts();
+    sidebar.classList.remove("show");
   };
 
-  tabsEl.appendChild(el);
+  tabsDiv.appendChild(div);
 }
 
 /* LOAD PRODUCTS */
 async function loadProducts() {
-  const { data } = await supabase
-    .from("products")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  products = data || [];
+  const { data } = await supabase.from("products").select("*");
+  allProducts = data;
   renderProducts();
 }
 
-/* RENDER PRODUCTS */
 function renderProducts() {
-  const q = searchInput.value.toLowerCase();
-  productsEl.innerHTML = "";
+  productsDiv.innerHTML = "";
 
-  const filtered = products.filter(p =>
-    (currentTab === "all" || p.tab_id === currentTab) &&
-    p.name.toLowerCase().includes(q)
+  let filtered = allProducts.filter(p =>
+    currentTab === "all" ? true : p.tab_id === currentTab
   );
 
-  if (!filtered.length) {
-    productsEl.innerHTML = `<p style="opacity:.5">No products</p>`;
+  const search = searchInput.value.toLowerCase();
+  if (search) {
+    filtered = filtered.filter(p =>
+      p.name.toLowerCase().includes(search)
+    );
+  }
+
+  if (filtered.length === 0) {
+    productsDiv.innerHTML = "<p>No products found</p>";
     return;
   }
 
@@ -80,19 +75,12 @@ function renderProducts() {
     card.innerHTML = `
       <img src="${p.image_url}">
       <div class="info">
-        <h3>${p.name}</h3>
-        <div class="price">$${p.price}</div>
-        <small>👀 ${p.views}</small>
-        <a href="${p.buy_link}" target="_blank">Buy</a>
+        <h4>${p.name}</h4>
+        <span>$${p.price}</span>
+        <button onclick="window.open('${p.buy_link}', '_blank')">Buy</button>
       </div>
     `;
-
-    card.onclick = () =>
-      supabase.from("products")
-        .update({ views: p.views + 1 })
-        .eq("id", p.id);
-
-    productsEl.appendChild(card);
+    productsDiv.appendChild(card);
   });
 }
 
