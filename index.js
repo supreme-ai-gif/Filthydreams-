@@ -10,7 +10,7 @@ const registerForm = document.getElementById("registerForm");
 const showRegister = document.getElementById("showRegister");
 const showLogin = document.getElementById("showLogin");
 
-// Toggle forms
+// --- TOGGLE LOGIN / REGISTER ---
 showRegister.addEventListener("click", (e) => {
   e.preventDefault();
   loginForm.classList.add("hidden");
@@ -23,52 +23,40 @@ showLogin.addEventListener("click", (e) => {
   loginForm.classList.remove("hidden");
 });
 
-// REGISTER LOGIC
+// --- REGISTER LOGIC ---
 registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const username = document.getElementById("registerUsername").value.trim();
   const password = document.getElementById("registerPassword").value.trim();
 
-  // Check if username exists
-  const { data: existing, error: err } = await supabase
-    .from("users")
-    .select("*")
-    .eq("username", username);
-
-  if (err) return alert("Error checking username");
+  // Check username exists
+  const { data: existing } = await supabase.from("users").select("*").eq("username", username);
   if (existing.length) return alert("Username already taken");
 
-  // Insert user
-  const { error } = await supabase
-    .from("users")
-    .insert({ username, password, role: "user" });
-
+  const { error } = await supabase.from("users").insert({ username, password, role: "user" });
   if (error) return alert("Error registering");
-  alert("Registered! Please login.");
+
+  alert("Registered successfully! Please login.");
   registerForm.reset();
   registerForm.classList.add("hidden");
   loginForm.classList.remove("hidden");
 });
 
-// LOGIN LOGIC
+// --- LOGIN LOGIC ---
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const username = document.getElementById("loginUsername").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
 
-  // Admin check
+  // ADMIN CHECK
   if (username === "admin" && password === "1234") {
     localStorage.setItem("isAdmin", "true");
     location.href = "./admin/admin.html";
     return;
   }
 
-  // User login
-  const { data, error } = await supabase
-    .from("users")
-    .select("*")
-    .eq("username", username)
-    .eq("password", password);
+  // USER CHECK
+  const { data, error } = await supabase.from("users").select("*").eq("username", username).eq("password", password);
 
   if (error) return alert("Error logging in");
   if (!data || data.length === 0) return alert("Invalid credentials");
