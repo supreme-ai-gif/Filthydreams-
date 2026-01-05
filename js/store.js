@@ -1,61 +1,38 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-const SUPABASE_URL = window.__ENV__.SUPABASE_URL;
-const SUPABASE_ANON_KEY = window.__ENV__.SUPABASE_ANON_KEY;
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = createClient(
+  window.__ENV__.SUPABASE_URL,
+  window.__ENV__.SUPABASE_ANON_KEY
+);
 
 const tabsEl = document.getElementById("tabs");
 const productsEl = document.getElementById("products");
 const searchInput = document.getElementById("searchInput");
 const menuBtn = document.getElementById("menuBtn");
 const sideMenu = document.getElementById("sideMenu");
-const authButtons = document.getElementById("authButtons");
+const logoutBtn = document.getElementById("logoutBtn");
 
 let currentTab = "all";
-let allProducts = [];
+let products = [];
 
-/* SIDE MENU TOGGLE */
+/* AUTH */
+logoutBtn.onclick = () => {
+  localStorage.clear();
+  location.href = "login.html";
+};
+
+/* MENU */
 menuBtn.onclick = () => sideMenu.classList.toggle("open");
-
-/* AUTH BUTTONS */
-function renderAuthButtons() {
-  const user = localStorage.getItem("user");
-
-  if (user) {
-    authButtons.innerHTML = `
-      <button id="profileBtn">Profile</button>
-      <button id="logoutBtn">Logout</button>
-    `;
-
-    document.getElementById("logoutBtn").onclick = () => {
-      localStorage.clear();
-      location.reload();
-    };
-
-    document.getElementById("profileBtn").onclick = () => {
-      location.href = "profile.html";
-    };
-
-  } else {
-    authButtons.innerHTML = `
-      <button id="loginBtn">Login</button>
-      <button id="registerBtn">Register</button>
-    `;
-
-    document.getElementById("loginBtn").onclick = () => location.href="login.html";
-    document.getElementById("registerBtn").onclick = () => location.href="register.html";
-  }
-}
 
 /* LOAD TABS */
 async function loadTabs() {
-  const { data: tabs } = await supabase.from("tabs").select("*").order("id");
+  const { data } = await supabase.from("tabs").select("*");
   tabsEl.innerHTML = "";
-  createTab("All", "all");
-  tabs.forEach(tab => createTab(tab.name, tab.id));
+  addTab("All", "all");
+  data.forEach(t => addTab(t.name, t.id));
 }
 
-function createTab(name, id) {
+function addTab(name, id) {
   const el = document.createElement("div");
   el.className = "tab";
   el.textContent = name;
@@ -78,23 +55,22 @@ async function loadProducts() {
     .select("*")
     .order("created_at", { ascending: false });
 
-  allProducts = data || [];
+  products = data || [];
   renderProducts();
 }
 
 /* RENDER PRODUCTS */
 function renderProducts() {
-  const search = searchInput.value.toLowerCase();
+  const q = searchInput.value.toLowerCase();
   productsEl.innerHTML = "";
 
-  const filtered = allProducts.filter(p => {
-    const matchesTab = currentTab === "all" || p.tab_id === currentTab;
-    const matchesSearch = p.name.toLowerCase().includes(search);
-    return matchesTab && matchesSearch;
-  });
+  const filtered = products.filter(p =>
+    (currentTab === "all" || p.tab_id === currentTab) &&
+    p.name.toLowerCase().includes(q)
+  );
 
-  if (filtered.length === 0) {
-    productsEl.innerHTML = `<p style="opacity:.6; text-align:center;">No products found</p>`;
+  if (!filtered.length) {
+    productsEl.innerHTML = `<p style="opacity:.5">No products</p>`;
     return;
   }
 
@@ -111,20 +87,17 @@ function renderProducts() {
       </div>
     `;
 
-    card.onclick = () => incrementViews(p.id);
+    card.onclick = () =>
+      supabase.from("products")
+        .update({ views: p.views + 1 })
+        .eq("id", p.id);
+
     productsEl.appendChild(card);
   });
 }
 
-/* VIEW COUNTER */
-async function incrementViews(id) {
-  await supabase.rpc("increment_views", { product_id: id });
-}
-
-/* SEARCH INPUT */
 searchInput.oninput = renderProducts;
 
 /* INIT */
-renderAuthButtons();
 loadTabs();
 loadProducts();
