@@ -1,5 +1,5 @@
 /* ----------------------
-   GLOBAL STYLES
+   GLOBAL
 ---------------------- */
 body {
   margin: 0;
@@ -50,11 +50,18 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ----------------------
+   HIDDEN CLASS
+---------------------- */
+.hidden {
+  display: none !important;
+}
+
+/* ----------------------
    AUTH CONTAINER
 ---------------------- */
 .auth-container {
   max-width: 400px;
-  margin: 100px auto;
+  margin: 80px auto;
   padding: 50px 30px;
   border-radius: 12px;
   background: #fff;
@@ -72,10 +79,6 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 14px;
 }
 
-.auth-container .form.hidden {
-  display: none;
-}
-
 .auth-container .switch {
   margin-top: 20px;
   font-size: 14px;
@@ -91,7 +94,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ----------------------
-   LOGO ANIMATION
+   LOGO
 ---------------------- */
 .logo {
   font-size: 50px;
