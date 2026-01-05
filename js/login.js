@@ -1,30 +1,39 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-const supabase = createClient(window.__ENV__.SUPABASE_URL, window.__ENV__.SUPABASE_ANON_KEY);
+const supabase = createClient(
+  window.__ENV__.SUPABASE_URL,
+  window.__ENV__.SUPABASE_ANON_KEY
+);
 
 document.getElementById("loginBtn").onclick = async () => {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  if (!username || !password) return alert("Fill all fields");
+  if (!username || !password) {
+    alert("Fill all fields");
+    return;
+  }
 
-  // Check if admin
+  // ADMIN CHECK
   if (username === "admin" && password === "1234") {
     localStorage.setItem("isAdmin", "true");
     location.href = "admin.html";
     return;
   }
 
-  // Check user
-  const { data: users, error } = await supabase
+  // USER CHECK
+  const { data, error } = await supabase
     .from("users")
     .select("*")
     .eq("username", username)
-    .eq("password", password);
+    .eq("password", password)
+    .single();
 
-  if (error) return alert(error.message);
-  if (!users || users.length === 0) return alert("Invalid login");
+  if (error || !data) {
+    alert("Invalid login");
+    return;
+  }
 
-  localStorage.setItem("user", JSON.stringify(users[0]));
+  localStorage.setItem("user", JSON.stringify(data));
   location.href = "store.html";
 };
