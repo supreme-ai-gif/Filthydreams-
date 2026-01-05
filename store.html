@@ -1,42 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Filthy Dreams Store</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FilthyDreams Store</title>
 
-  <link rel="stylesheet" href="css/store.css">
+  <link rel="stylesheet" href="../css/store.css" />
+  <script src="../js/env.js"></script>
 </head>
 <body>
 
-<!-- SIDE MENU -->
-<div id="sideMenu" class="side-menu">
-  <h2>Menu</h2>
-  <button onclick="location.href='store.html'">Home</button>
-  <button>Cart (soon)</button>
-  <button onclick="location.href='profile.html'">Profile</button>
-</div>
-
-<!-- TOP BAR -->
+<!-- MOBILE TOP BAR -->
 <header class="topbar">
   <button id="menuBtn">☰</button>
   <h1 class="logo">Filthy<span>Dreams</span></h1>
-
   <input id="searchInput" placeholder="Search products..." />
-
-  <div class="actions">
-    <button id="cartBtn">🛒</button>
-    <button id="logoutBtn">Logout</button>
-  </div>
 </header>
 
-<!-- TABS -->
-<div id="tabs" class="tabs"></div>
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <h2>Categories</h2>
+  <div id="tabs"></div>
+</aside>
 
-<!-- PRODUCTS -->
-<main id="products" class="products"></main>
+<!-- MAIN CONTENT -->
+<main class="content">
+  <div id="products" class="product-grid"></div>
+</main>
 
-<script type="module" src="js/env.js"></script>
-<script type="module" src="js/store.js"></script>
+<script type="module" src="../js/store.js"></script>
 </body>
 </html>
