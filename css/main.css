@@ -50,16 +50,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ----------------------
-   AUTH CONTAINER (Login/Register)
+   AUTH CONTAINER
 ---------------------- */
 .auth-container {
-  max-width: 360px;
+  max-width: 400px;
   margin: 100px auto;
-  padding: 40px 30px;
+  padding: 50px 30px;
   border-radius: 12px;
   background: #fff;
   box-shadow: 0 20px 50px rgba(0,0,0,.08);
   text-align: center;
+  position: relative;
 }
 
 .auth-container input {
@@ -71,37 +72,31 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 14px;
 }
 
-.auth-container p {
+.auth-container .form.hidden {
+  display: none;
+}
+
+.auth-container .switch {
   margin-top: 20px;
   font-size: 14px;
 }
 
-.auth-container a {
+.auth-container .switch a {
   color: orange;
   text-decoration: none;
 }
 
-.auth-container a:hover {
+.auth-container .switch a:hover {
   text-decoration: underline;
 }
 
 /* ----------------------
-   LANDING PAGE
+   LOGO ANIMATION
 ---------------------- */
-.landing-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  text-align: center;
-  padding: 20px;
-}
-
 .logo {
   font-size: 50px;
   font-weight: bold;
-  margin-bottom: 50px;
+  margin-bottom: 40px;
 }
 
 .logo .letter-f {
@@ -117,12 +112,6 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-block;
   font-size: 50px;
   animation: fadeIn 1s 0.6s forwards;
-}
-
-/* BUTTONS ON LANDING PAGE */
-.landing-buttons {
-  display: flex;
-  gap: 20px;
 }
 
 @keyframes rollOut {
@@ -145,10 +134,5 @@ h1, h2, h3, h4, h5, h6 {
 
   .logo .letter-f {
     font-size: 50px;
-  }
-
-  .landing-buttons {
-    flex-direction: column;
-    gap: 15px;
   }
 }
