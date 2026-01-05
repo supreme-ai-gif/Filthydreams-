@@ -1,169 +1,151 @@
-/* =========================
-   RESET & GLOBAL
-========================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+/* ----------------------
+   STORE LAYOUT
+---------------------- */
 body {
+  margin: 0;
   font-family: "Segoe UI", sans-serif;
   background: #fff;
   color: #111;
 }
 
-/* =========================
-   TOPBAR
-========================= */
-.topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: white;
+.store-header {
   display: flex;
   align-items: center;
-  padding: 0 20px;
-  border-bottom: 1px solid #eee;
-  z-index: 1000;
+  justify-content: space-between;
+  padding: 15px 20px;
+  background: orange;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.topbar h1 {
-  color: orange;
-  font-size: 22px;
+.store-logo {
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.menu-icon {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.store-header input {
   flex: 1;
-  text-align: center;
-}
-
-.topbar h1 span {
-  color: #111;
-}
-
-.topbar input {
+  margin-left: 20px;
   padding: 8px 12px;
-  border-radius: 20px;
-  border: 1px solid #ddd;
-  width: 180px;
+  border-radius: 25px;
+  border: none;
+  font-size: 14px;
 }
 
-/* =========================
-   SIDEBAR
-========================= */
-.sidebar {
+/* ----------------------
+   SIDE MENU
+---------------------- */
+.side-menu {
   position: fixed;
-  top: 60px;
-  left: -260px;
+  top: 0;
+  left: -250px;
   width: 250px;
-  bottom: 0;
-  background: white;
-  border-right: 1px solid #eee;
-  padding: 20px;
-  box-shadow: 2px 0 20px rgba(0,0,0,.05);
+  height: 100%;
+  background: #fff;
+  box-shadow: 3px 0 15px rgba(0,0,0,.1);
   transition: left 0.3s ease;
-  z-index: 1001;
+  z-index: 200;
+  padding: 20px;
 }
 
-.sidebar.show {
+.side-menu.active {
   left: 0;
 }
 
-.sidebar .profile {
+.side-menu .profile {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
-.sidebar .profile .avatar {
+.side-menu .avatar {
   width: 80px;
   height: 80px;
+  background: orange;
   border-radius: 50%;
-  border: 3px solid orange;
-  object-fit: cover;
-  margin-bottom: 10px;
+  margin: 0 auto 10px auto;
 }
 
-.sidebar .profile h4 {
+.side-menu h3 {
+  margin: 5px 0 0 0;
+}
+
+.side-menu p {
+  font-size: 12px;
+  color: #555;
+}
+
+.side-menu ul {
+  list-style: none;
+  padding: 0;
+}
+
+.side-menu ul li {
+  padding: 10px 0;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  font-weight: 500;
+}
+
+.side-menu ul li:hover {
   color: orange;
 }
 
-.sidebar ul {
-  list-style: none;
-}
-
-.sidebar ul li {
-  padding: 12px 10px;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.sidebar ul li:hover {
-  background: orange;
-  color: white;
-}
-
-/* =========================
-   MAIN CONTENT
-========================= */
-.main-content {
-  margin-top: 60px;
-  padding: 20px;
-  margin-left: 0;
-  transition: margin-left 0.3s ease;
-}
-
-.main-content.with-sidebar {
-  margin-left: 250px;
-}
-
-/* =========================
+/* ----------------------
    TABS
-========================= */
+---------------------- */
 .tabs {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
   overflow-x: auto;
+  background: #fff8f0;
+  padding: 10px 20px;
+  border-bottom: 1px solid #eee;
 }
 
-.tab {
-  padding: 8px 16px;
-  border-radius: 20px;
-  border: 1px solid orange;
+.tabs button {
   background: white;
-  color: orange;
+  border: 1px solid orange;
+  border-radius: 20px;
+  padding: 8px 16px;
+  margin-right: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
+  font-weight: 500;
+  transition: all 0.2s;
 }
 
-.tab.active, .tab:hover {
+.tabs button.active, .tabs button:hover {
   background: orange;
   color: white;
 }
 
-/* =========================
-   PRODUCTS GRID
-========================= */
-.products-grid {
+/* ----------------------
+   PRODUCTS
+---------------------- */
+.products-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 20px;
+  padding: 20px;
 }
 
 .product-card {
   border: 1px solid #eee;
   border-radius: 12px;
   overflow: hidden;
-  background: white;
+  background: #fff;
+  box-shadow: 0 5px 15px rgba(0,0,0,.05);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s;
 }
 
 .product-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0,0,0,.08);
 }
 
 .product-card img {
@@ -176,36 +158,33 @@ body {
   padding: 10px;
 }
 
-.product-card .info h4 {
-  font-size: 14px;
-  margin-bottom: 6px;
+.product-card h4 {
+  margin: 5px 0;
+  font-size: 16px;
+  font-weight: 600;
 }
 
-.product-card .info span {
+.product-card span {
   color: orange;
   font-weight: bold;
 }
 
-.product-card .info small {
+.product-card small {
   display: block;
   margin-top: 5px;
+  color: #555;
   font-size: 12px;
-  color: #777;
 }
 
-/* =========================
+/* ----------------------
    RESPONSIVE
-========================= */
-@media(max-width:768px){
-  .main-content.with-sidebar {
-    margin-left: 0;
+---------------------- */
+@media (max-width: 500px) {
+  .store-header input {
+    display: none;
   }
 
-  .sidebar {
-    width: 220px;
+  .products-container {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   }
-
-  .tabs {
-    gap: 5px;
-  }
-  }
+   }
