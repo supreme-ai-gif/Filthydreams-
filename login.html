@@ -6,13 +6,22 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  <div class="auth-container">
-    <h2>Login</h2>
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
+
+  <div class="center-box">
+    <h2>Welcome Back</h2>
+
+    <input id="username" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
+
     <button id="loginBtn">Login</button>
+
+    <p class="small">
+      No account?
+      <a href="register.html">Register</a>
+    </p>
   </div>
 
+  <script type="module" src="js/env.js"></script>
   <script type="module" src="js/login.js"></script>
 </body>
 </html>
