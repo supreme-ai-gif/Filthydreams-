@@ -1,157 +1,154 @@
-/* =========================
-   GLOBAL RESET (SAFE)
-========================= */
-* {
+/* ----------------------
+   GLOBAL STYLES
+---------------------- */
+body {
   margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html, body {
-  width: 100%;
-  height: 100%;
-  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #ffffff;
+  font-family: "Segoe UI", sans-serif;
+  background: #fff;
   color: #111;
 }
 
-/* =========================
-   GLOBAL ELEMENTS
-========================= */
-a {
-  text-decoration: none;
-  color: inherit;
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
 }
 
-button {
-  cursor: pointer;
-  border: none;
-  outline: none;
-  font-family: inherit;
-}
-
-input, textarea, select {
-  font-family: inherit;
-  outline: none;
-}
-
-/* =========================
-   BUTTONS (REUSABLE)
-========================= */
+/* ----------------------
+   BUTTONS
+---------------------- */
 .btn {
-  padding: 12px 26px;
+  display: inline-block;
+  text-align: center;
+  padding: 12px 25px;
   border-radius: 30px;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn.primary {
   background: orange;
   color: white;
-  font-size: 15px;
-  transition: all .25s ease;
+  border: none;
 }
 
-.btn:hover {
-  opacity: .9;
-  transform: translateY(-1px);
+.btn.primary:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
 }
 
-.btn.outline {
-  background: transparent;
+.btn.secondary {
+  background: white;
   color: orange;
   border: 2px solid orange;
 }
 
-.btn.danger {
-  background: #e63946;
+.btn.secondary:hover {
+  background: orange;
+  color: white;
+  transform: translateY(-2px);
 }
 
-/* =========================
-   FORMS (LOGIN / REGISTER / PROFILE)
-========================= */
-.form-page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.form-card {
-  width: 100%;
-  max-width: 380px;
-  background: white;
-  padding: 30px;
-  border-radius: 18px;
+/* ----------------------
+   AUTH CONTAINER (Login/Register)
+---------------------- */
+.auth-container {
+  max-width: 360px;
+  margin: 100px auto;
+  padding: 40px 30px;
+  border-radius: 12px;
+  background: #fff;
   box-shadow: 0 20px 50px rgba(0,0,0,.08);
-}
-
-.form-card h2 {
   text-align: center;
-  margin-bottom: 20px;
-  color: orange;
 }
 
-.form-card input {
+.auth-container input {
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
+  padding: 12px 15px;
   margin-bottom: 15px;
-}
-
-/* =========================
-   PROFILE PAGE
-========================= */
-.profile-avatar {
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 0 auto 15px;
-  display: block;
-  border: 4px solid orange;
-}
-
-/* =========================
-   LANDING PAGE (INDEX ONLY)
-========================= */
-.landing-body {
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.landing {
-  text-align: center;
-}
-
-.landing .logo {
-  font-size: 52px;
-  font-weight: 700;
-  color: orange;
-}
-
-.landing .logo span {
-  color: #111;
-}
-
-.landing p {
-  margin-top: 10px;
-  color: #666;
-}
-
-.landing .actions {
-  margin-top: 25px;
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-}
-
-/* =========================
-   UTILITIES
-========================= */
-.muted {
-  color: #777;
+  border-radius: 8px;
+  border: 1px solid #ddd;
   font-size: 14px;
 }
 
-.center {
+.auth-container p {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.auth-container a {
+  color: orange;
+  text-decoration: none;
+}
+
+.auth-container a:hover {
+  text-decoration: underline;
+}
+
+/* ----------------------
+   LANDING PAGE
+---------------------- */
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
   text-align: center;
+  padding: 20px;
+}
+
+.logo {
+  font-size: 50px;
+  font-weight: bold;
+  margin-bottom: 50px;
+}
+
+.logo .letter-f {
+  color: orange;
+  font-size: 70px;
+  display: inline-block;
+  transform: rotate(-10deg);
+  animation: rollOut 1s ease forwards;
+}
+
+.logo .rest-name {
+  opacity: 0;
+  display: inline-block;
+  font-size: 50px;
+  animation: fadeIn 1s 0.6s forwards;
+}
+
+/* BUTTONS ON LANDING PAGE */
+.landing-buttons {
+  display: flex;
+  gap: 20px;
+}
+
+@keyframes rollOut {
+  0% { transform: rotate(-180deg) translateX(-100px); opacity: 0; }
+  100% { transform: rotate(0deg) translateX(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(20px);}
+  100% { opacity: 1; transform: translateY(0);}
+}
+
+/* ----------------------
+   RESPONSIVE
+---------------------- */
+@media (max-width: 500px) {
+  .logo {
+    font-size: 40px;
+  }
+
+  .logo .letter-f {
+    font-size: 50px;
+  }
+
+  .landing-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
 }
