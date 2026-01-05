@@ -3,25 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <title>Filthy Dreams Store</title>
-  <link rel="stylesheet" href="css/main.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="css/store.css">
 </head>
 <body>
 
 <!-- SIDE MENU -->
 <div id="sideMenu" class="side-menu">
-  <h2>☰ Menu</h2>
-  <a href="#" id="menuHome">Home</a>
-  <a href="#" id="menuCart">Cart 🛒</a>
-  <a href="#" id="menuProfile">Profile 👤</a>
+  <h2>Menu</h2>
+  <button onclick="location.href='store.html'">Home</button>
+  <button>Cart (soon)</button>
+  <button onclick="location.href='profile.html'">Profile</button>
 </div>
 
 <!-- TOP BAR -->
 <header class="topbar">
   <button id="menuBtn">☰</button>
-  <h1>Filthy Dreams</h1>
-  <input id="searchInput" type="text" placeholder="Search products...">
-  <div id="authButtons" class="auth-buttons"></div>
+  <h1 class="logo">Filthy<span>Dreams</span></h1>
+
+  <input id="searchInput" placeholder="Search products..." />
+
+  <div class="actions">
+    <button id="cartBtn">🛒</button>
+    <button id="logoutBtn">Logout</button>
+  </div>
 </header>
 
 <!-- TABS -->
