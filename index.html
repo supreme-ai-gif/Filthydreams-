@@ -8,14 +8,14 @@
 </head>
 <body>
 
-  <!-- LANDING & AUTH CONTAINER -->
   <div class="auth-container" id="authContainer">
+    <!-- LOGO -->
     <h1 class="logo">
       <span class="letter-f">F</span>
       <span class="rest-name">ilthyDreams</span>
     </h1>
 
-    <!-- LOGIN FORM -->
+    <!-- LOGIN FORM (VISIBLE INITIALLY) -->
     <form id="loginForm" class="form">
       <input type="text" id="loginUsername" placeholder="Username" required>
       <input type="password" id="loginPassword" placeholder="Password" required>
@@ -23,7 +23,7 @@
       <p class="switch">Don't have an account? <a href="#" id="showRegister">Register</a></p>
     </form>
 
-    <!-- REGISTER FORM (hidden initially) -->
+    <!-- REGISTER FORM (HIDDEN INITIALLY) -->
     <form id="registerForm" class="form hidden">
       <input type="text" id="registerUsername" placeholder="Username" required>
       <input type="password" id="registerPassword" placeholder="Password" required>
@@ -32,6 +32,7 @@
     </form>
   </div>
 
+  <!-- ENV + JS -->
   <script type="module" src="./js/env.js"></script>
   <script type="module" src="./index.js"></script>
 </body>
