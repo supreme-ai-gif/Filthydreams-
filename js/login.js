@@ -35,5 +35,5 @@ document.getElementById("loginBtn").onclick = async () => {
   }
 
   localStorage.setItem("user", JSON.stringify(data));
-  location.href = "store.html";
+  location.href = "./store/store.html";
 };
