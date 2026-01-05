@@ -17,7 +17,7 @@ document.getElementById("loginBtn").onclick = async () => {
   // ADMIN CHECK
   if (username === "admin" && password === "1234") {
     localStorage.setItem("isAdmin", "true");
-    location.href = "admin.html";
+    location.href = "./admin/admin.html";
     return;
   }
 
