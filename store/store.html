@@ -2,39 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FilthyDreams Store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="./store.css">
 </head>
 <body>
-  <!-- HEADER -->
-  <header class="store-header">
-    <div class="menu-icon" id="menuIcon">☰</div>
-    <h1 class="store-logo">FilthyDreams</h1>
-    <input type="text" placeholder="Search products..." id="searchBar">
-  </header>
 
-  <!-- SIDE MENU -->
-  <aside id="sideMenu" class="side-menu">
-    <div class="profile">
-      <div class="avatar" id="avatar"></div>
-      <h3 id="profileName"></h3>
-      <p id="profileEmail"></p>
-    </div>
-    <ul>
-      <li id="accountBtn">Account</li>
-      <li id="logoutBtn">Logout</li>
-    </ul>
-  </aside>
+<!-- OVERLAY -->
+<div id="overlay" class="overlay"></div>
 
-  <!-- TABS -->
-  <nav class="tabs" id="tabsNav"></nav>
+<!-- HEADER -->
+<header class="store-header">
+  <button id="menuBtn" class="menu-btn">☰</button>
+  <h1 class="store-logo">FilthyDreams</h1>
+  <input id="searchBar" type="text" placeholder="Search products...">
+</header>
 
-  <!-- PRODUCTS -->
-  <main class="products-container" id="productsContainer"></main>
+<!-- SIDEBAR -->
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-profile">
+    <div id="avatar" class="avatar"></div>
+    <h3 id="profileName">User</h3>
+    <p id="profileEmail"></p>
+  </div>
 
-  <script type="module" src="../js/env.js"></script>
-  <script type="module" src="./store-ui.js"></script>
+  <ul class="sidebar-links">
+    <li id="profileBtn">Account Profile</li>
+    <li id="cartBtn">Cart</li>
+    <li id="logoutBtn">Logout</li>
+  </ul>
+</aside>
+
+<!-- TABS -->
+<nav id="tabsNav" class="tabs"></nav>
+
+<!-- PRODUCTS -->
+<main id="productsContainer" class="products-grid"></main>
+
+<script type="module" src="../js/env.js"></script>
+<script type="module" src="./store-ui.js"></script>
 </body>
 </html>
