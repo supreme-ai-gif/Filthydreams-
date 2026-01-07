@@ -2,53 +2,48 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-  // ----------------------------
-  // SUPABASE
-  // ----------------------------
   const supabase = createClient(
     window.__ENV__.SUPABASE_URL,
     window.__ENV__.SUPABASE_ANON_KEY
   );
 
-  // ----------------------------
-  // ELEMENTS (MATCH YOUR HTML)
-  // ----------------------------
+  // -------------------------
+  // ELEMENTS
+  // -------------------------
   const tabsNav = document.getElementById("tabsNav");
   const productsContainer = document.getElementById("productsContainer");
   const searchBar = document.getElementById("searchBar");
 
-  const profileBtn = document.getElementById("profileBtn");
-  const cartBtn = document.getElementById("cartBtn");
+  // TOP RIGHT ICONS (YOU ADD ICONS IN HTML)
+  const cartIcon = document.getElementById("cartIcon");
+  const profileIcon = document.getElementById("profileIcon");
   const logoutBtn = document.getElementById("logoutBtn");
 
-  // ----------------------------
+  // -------------------------
+  // ROUTING
+  // -------------------------
+  if (cartIcon) cartIcon.onclick = () => location.href = "./cart.html";
+  if (profileIcon) profileIcon.onclick = () => location.href = "./profile.html";
+  if (logoutBtn) logoutBtn.onclick = () => location.href = "../login.html";
+
+  // -------------------------
   // STATE
-  // ----------------------------
+  // -------------------------
   let allProducts = [];
-  let currentTab = "all";
   let allTabs = [];
+  let currentTab = "all";
 
-  // ----------------------------
-  // SIDEBAR TEMPLATE ROUTING
-  // ----------------------------
-  profileBtn.onclick = () => location.href = "./profile.html";
-  cartBtn.onclick = () => location.href = "./cart.html";
-  logoutBtn.onclick = () => {
-    localStorage.clear();
-    location.href = "../index.html";
-  };
-
-  // ----------------------------
+  // -------------------------
   // LOAD TABS
-  // ----------------------------
+  // -------------------------
   async function loadTabs() {
     const { data, error } = await supabase
       .from("tabs")
       .select("*")
-      .order("created_at", { ascending: true });
+      .order("created_at");
 
     if (error) {
-      console.error("Tabs error:", error);
+      console.error(error);
       return;
     }
 
@@ -58,51 +53,48 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function renderTabs() {
     tabsNav.innerHTML = "";
+    createTab("All", "all");
 
-    // ALL TAB
-    createTabButton("All", "all");
-
-    // ADMIN TABS
     allTabs.forEach(tab => {
-      createTabButton(tab.name, tab.id);
+      createTab(tab.name, tab.id);
     });
   }
 
-  function createTabButton(name, id) {
+  function createTab(name, id) {
     const btn = document.createElement("button");
     btn.textContent = name;
-    btn.className = id === currentTab ? "active" : "";
+    if (id === currentTab) btn.classList.add("active");
 
     btn.onclick = () => {
       currentTab = id;
-      updateActiveTabs();
+      updateTabs();
       renderProducts();
     };
 
     tabsNav.appendChild(btn);
   }
 
-  function updateActiveTabs() {
+  function updateTabs() {
     [...tabsNav.children].forEach(btn => {
       btn.classList.remove("active");
       if (
         (btn.textContent === "All" && currentTab === "all") ||
-        btn.textContent === getTabNameById(currentTab)
+        btn.textContent === getTabName(currentTab)
       ) {
         btn.classList.add("active");
       }
     });
   }
 
-  function getTabNameById(id) {
+  function getTabName(id) {
     if (id === "all") return "All";
-    const tab = allTabs.find(t => t.id === id);
-    return tab ? tab.name : "";
+    const t = allTabs.find(t => t.id === id);
+    return t ? t.name : "";
   }
 
-  // ----------------------------
-  // LOAD PRODUCTS (ONCE)
-  // ----------------------------
+  // -------------------------
+  // LOAD PRODUCTS
+  // -------------------------
   async function loadProducts() {
     const { data, error } = await supabase
       .from("products")
@@ -110,7 +102,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Products error:", error);
+      console.error(error);
       return;
     }
 
@@ -118,35 +110,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderProducts();
   }
 
-  // ----------------------------
+  // -------------------------
   // RENDER PRODUCTS
-  // ----------------------------
+  // -------------------------
   function renderProducts() {
     productsContainer.innerHTML = "";
 
     let filtered = [...allProducts];
 
-    // FILTER BY TAB
     if (currentTab !== "all") {
       filtered = filtered.filter(p => p.tab_id === currentTab);
     }
 
-    // SEARCH FILTER
-    const q = searchBar.value.trim().toLowerCase();
+    const q = searchBar.value.toLowerCase();
     if (q) {
       filtered = filtered.filter(p =>
         p.name.toLowerCase().includes(q)
       );
     }
 
-    if (filtered.length === 0) return;
-
     filtered.forEach(p => {
       const card = document.createElement("div");
       card.className = "product-card";
-
       card.innerHTML = `
-        <img src="${p.image_url}" alt="${p.name}">
+        <img src="${p.image_url}">
         <div class="info">
           <h4>${p.name}</h4>
           <span>$${p.price}</span>
@@ -161,16 +148,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // ----------------------------
-  // SEARCH LISTENER
-  // ----------------------------
-  searchBar.addEventListener("input", () => {
-    renderProducts();
-  });
+  // -------------------------
+  // SEARCH
+  // -------------------------
+  searchBar.addEventListener("input", renderProducts);
 
-  // ----------------------------
+  // -------------------------
   // INIT
-  // ----------------------------
+  // -------------------------
   await loadTabs();
   await loadProducts();
 
