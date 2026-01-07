@@ -5,30 +5,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FilthyDreams</title>
   <link rel="stylesheet" href="./css/main.css">
+  <style>
+    /* Auth container styling */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f6f6f6;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .auth-container {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+      width: 320px;
+      text-align: center;
+    }
+    h1.logo {
+      color: orange;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: orange;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover { background: #ff9500; }
+    .switch { font-size: 14px; margin-top: 10px; }
+    .switch a { color: orange; cursor: pointer; text-decoration: none; }
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
 
-  <div class="auth-container" id="authContainer">
-    <!-- LOGO -->
-    <h1 class="logo">
-      <span class="letter-f">F</span>
-      <span class="rest-name">ilthyDreams</span>
-    </h1>
+  <div class="auth-container">
+    <h1 class="logo">FilthyDreams</h1>
 
-    <!-- LOGIN FORM (VISIBLE INITIALLY) -->
-    <form id="loginForm" class="form">
+    <!-- LOGIN FORM -->
+    <form id="loginForm">
       <input type="text" id="loginUsername" placeholder="Username" required>
       <input type="password" id="loginPassword" placeholder="Password" required>
-      <button type="submit" class="btn primary">Login</button>
-      <p class="switch">Don't have an account? <a href="#" id="showRegister">Register</a></p>
+      <button type="submit">Login</button>
+      <p class="switch">Don't have an account? <a id="showRegister">Register</a></p>
     </form>
 
-    <!-- REGISTER FORM (HIDDEN INITIALLY) -->
-    <form id="registerForm" class="form hidden">
+    <!-- REGISTER FORM -->
+    <form id="registerForm" class="hidden">
       <input type="text" id="registerUsername" placeholder="Username" required>
       <input type="password" id="registerPassword" placeholder="Password" required>
-      <button type="submit" class="btn primary">Register</button>
-      <p class="switch">Already have an account? <a href="#" id="showLogin">Login</a></p>
+      <button type="submit">Register</button>
+      <p class="switch">Already have an account? <a id="showLogin">Login</a></p>
     </form>
   </div>
 
