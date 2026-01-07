@@ -2,108 +2,148 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 document.addEventListener("DOMContentLoaded", async () => {
 
+  // SUPABASE
   const supabase = createClient(
     window.__ENV__.SUPABASE_URL,
     window.__ENV__.SUPABASE_ANON_KEY
   );
 
-  // DOM
-  const sidebar = document.getElementById("sidebar");
-  const overlay = document.getElementById("overlay");
-  const menuBtn = document.getElementById("menuBtn");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const productsContainer = document.getElementById("productsContainer");
-  const tabsNav = document.getElementById("tabsNav");
-  const searchBar = document.getElementById("searchBar");
+  // ELEMENTS
+  const tabsContainer = document.getElementById("tabs");
+  const productsContainer = document.getElementById("products");
+  const searchInput = document.getElementById("searchInput");
 
-  // ===== SIDEBAR TOGGLE =====
-  function openSidebar() {
-    sidebar.classList.add("show");
-    overlay.classList.add("show");
-  }
-
-  function closeSidebar() {
-    sidebar.classList.remove("show");
-    overlay.classList.remove("show");
-  }
-
-  menuBtn.onclick = openSidebar;
-  overlay.onclick = closeSidebar;
-
-  logoutBtn.onclick = () => {
-    localStorage.clear();
-    location.href = "../index.html";
-  };
-
-  // ===== LOAD PROFILE =====
-  const user = JSON.parse(localStorage.getItem("userProfile") || "{}");
-  document.getElementById("profileName").textContent = user.name || "User";
-  document.getElementById("profileEmail").textContent = user.email || "";
-
-  // ===== TABS =====
   let currentTab = "all";
+  let allProducts = [];
 
+  // ----------------------------
+  // LOAD TABS
+  // ----------------------------
   async function loadTabs() {
-    const { data: tabs } = await supabase.from("tabs").select("*");
-    tabsNav.innerHTML = "";
-    renderTab("All", "all");
-    tabs?.forEach(t => renderTab(t.name, t.id));
+    const { data: tabs, error } = await supabase
+      .from("tabs")
+      .select("*")
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      console.error("Tabs error:", error);
+      return;
+    }
+
+    tabsContainer.innerHTML = "";
+
+    // ALL TAB
+    createTab("All", "all");
+
+    // ADMIN TABS
+    tabs.forEach(tab => {
+      createTab(tab.name, tab.id);
+    });
   }
 
-  function renderTab(name, id) {
+  function createTab(name, id) {
     const btn = document.createElement("button");
+    btn.className = "tab-btn";
     btn.textContent = name;
     if (currentTab === id) btn.classList.add("active");
 
-    btn.onclick = () => {
+    btn.addEventListener("click", () => {
       currentTab = id;
-      highlightTabs();
-      loadProducts();
-    };
+      updateActiveTab();
+      renderProducts();
+    });
 
-    tabsNav.appendChild(btn);
+    tabsContainer.appendChild(btn);
   }
 
-  function highlightTabs() {
-    [...tabsNav.children].forEach(b => b.classList.remove("active"));
-    [...tabsNav.children].find(b => b.textContent === (currentTab === "all" ? "All" : b.textContent))
-      ?.classList.add("active");
+  function updateActiveTab() {
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.classList.remove("active");
+      if (
+        (btn.textContent === "All" && currentTab === "all") ||
+        btn.dataset?.id === currentTab
+      ) {
+        btn.classList.add("active");
+      }
+    });
   }
 
-  // ===== PRODUCTS =====
+  // ----------------------------
+  // LOAD PRODUCTS
+  // ----------------------------
   async function loadProducts() {
-    let query = supabase.from("products").select("*");
-    if (currentTab !== "all") query = query.eq("tab_id", currentTab);
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-    const { data } = await query;
-    const search = searchBar.value.toLowerCase();
+    if (error) {
+      console.error("Products error:", error);
+      return;
+    }
 
+    allProducts = data || [];
+    renderProducts();
+  }
+
+  // ----------------------------
+  // RENDER PRODUCTS
+  // ----------------------------
+  function renderProducts() {
     productsContainer.innerHTML = "";
 
-    data?.filter(p => p.name.toLowerCase().includes(search))
-      products.forEach(p => {
-  const card = document.createElement("div");
-  card.className = "product-card";
+    let filtered = [...allProducts];
 
-  card.innerHTML = `
-    <img src="${p.image_url}" alt="${p.name}">
-    <div class="product-info">
-      <h4>${p.name}</h4>
-      <span class="price">$${p.price}</span>
-    </div>
-  `;
+    // FILTER BY TAB
+    if (currentTab !== "all") {
+      filtered = filtered.filter(p => p.tab_id === currentTab);
+    }
 
-  // ✅ ADD THIS PART (THIS IS THE CONNECTION)
-  card.addEventListener("click", () => {
-    window.location.href = `product.html?id=${p.id}`;
-  });
+    // SEARCH
+    const query = searchInput?.value?.toLowerCase();
+    if (query) {
+      filtered = filtered.filter(p =>
+        p.name.toLowerCase().includes(query)
+      );
+    }
 
-  storeProducts.appendChild(card);
-});
- }
+    if (filtered.length === 0) {
+      productsContainer.innerHTML = `<p class="muted">No products found</p>`;
+      return;
+    }
 
-  searchBar.oninput = loadProducts;
+    filtered.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "product-card";
 
+      card.innerHTML = `
+        <img src="${p.image_url}" alt="${p.name}">
+        <div class="product-info">
+          <h4>${p.name}</h4>
+          <span class="price">$${p.price}</span>
+        </div>
+      `;
+
+      // 👉 PRODUCT PAGE NAVIGATION
+      card.addEventListener("click", () => {
+        window.location.href = `product.html?id=${p.id}`;
+      });
+
+      productsContainer.appendChild(card);
+    });
+  }
+
+  // ----------------------------
+  // SEARCH LISTENER
+  // ----------------------------
+  if (searchInput) {
+    searchInput.addEventListener("input", renderProducts);
+  }
+
+  // ----------------------------
+  // INIT
+  // ----------------------------
   await loadTabs();
   await loadProducts();
+
 });
