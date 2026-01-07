@@ -10,71 +10,122 @@ const registerForm = document.getElementById("registerForm");
 const showRegister = document.getElementById("showRegister");
 const showLogin = document.getElementById("showLogin");
 
-// Toggle forms
-showRegister.addEventListener("click", e => {
+// --- TOGGLE LOGIN / REGISTER ---
+showRegister.addEventListener("click", (e) => {
   e.preventDefault();
   loginForm.classList.add("hidden");
   registerForm.classList.remove("hidden");
 });
-showLogin.addEventListener("click", e => {
+
+showLogin.addEventListener("click", (e) => {
   e.preventDefault();
   registerForm.classList.add("hidden");
   loginForm.classList.remove("hidden");
 });
 
-// -------- REGISTER --------
-registerForm.addEventListener("submit", async e => {
+// --- AUTO REDIRECT IF LOGGED IN ---
+window.addEventListener("DOMContentLoaded", async () => {
+  const loggedUser = localStorage.getItem("userId");
+  const isAdmin = localStorage.getItem("isAdmin");
+
+  if (isAdmin === "true") {
+    location.href = "./admin/admin.html";
+    return;
+  }
+
+  if (loggedUser) {
+    // Fetch user to check profile completion
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", loggedUser)
+      .single();
+    if (data) {
+      if (!data.email || !data.avatar_url) {
+        location.href = "./profile-setup.html";
+      } else {
+        localStorage.setItem("userProfile", JSON.stringify({
+          name: data.username,
+          email: data.email,
+          avatar: data.avatar_url
+        }));
+        location.href = "./store/store.html";
+      }
+    } else {
+      localStorage.removeItem("userId");
+    }
+  }
+});
+
+// --- REGISTER LOGIC ---
+registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const username = document.getElementById("registerUsername").value.trim();
   const password = document.getElementById("registerPassword").value.trim();
 
-  if (!username || !password) return alert("Enter username and password");
+  if (!username || !password) return alert("Enter all fields");
 
   // Check if username exists
-  const { data: existing } = await supabase.from("users").select("id").eq("username", username).single();
-  if (existing) return alert("Username already taken");
+  const { data: existing } = await supabase
+    .from("users")
+    .select("*")
+    .eq("username", username);
 
-  // Insert new user
-  const { data, error } = await supabase.from("users").insert({ username, password, role: "user" }).select().single();
+  if (existing.length) return alert("Username already taken");
+
+  const { data, error } = await supabase
+    .from("users")
+    .insert({ username, password, role: "user" })
+    .select()
+    .single();
+
   if (error || !data) return alert("Error registering");
 
-  // Save userId in localStorage
+  alert("Registered successfully! Please setup your profile.");
+  // Save userId for profile setup
   localStorage.setItem("userId", data.id);
-  localStorage.setItem("username", data.username);
-
-  // Redirect to profile setup page
   location.href = "./profile-setup.html";
 });
 
-// -------- LOGIN --------
-loginForm.addEventListener("submit", async e => {
+// --- LOGIN LOGIC ---
+loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const username = document.getElementById("loginUsername").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
 
-  if (!username || !password) return alert("Enter username and password");
+  if (!username || !password) return alert("Enter all fields");
 
-  // Admin check
+  // ADMIN CHECK
   if (username === "admin" && password === "1234") {
     localStorage.setItem("isAdmin", "true");
     location.href = "./admin/admin.html";
     return;
   }
 
-  // User check
-  const { data, error } = await supabase.from("users").select("*").eq("username", username).eq("password", password).single();
+  // USER CHECK
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("username", username)
+    .eq("password", password)
+    .single();
+
   if (error || !data) return alert("Invalid credentials");
 
-  // Save user info for cart/profile
-  localStorage.setItem("userId", data.id);
-  localStorage.setItem("username", data.username);
-  localStorage.setItem("email", data.email || "");
-  localStorage.setItem("avatar", data.avatar_url || "");
+  const user = data;
 
-  // If profile not complete (no email or avatar), go to profile setup
-  if (!data.email || !data.avatar_url) {
+  // Check profile completion
+  if (!user.email || !user.avatar_url) {
+    localStorage.setItem("userId", user.id);
     location.href = "./profile-setup.html";
   } else {
+    // Save user profile
+    localStorage.setItem("userId", user.id);
+    localStorage.setItem("userProfile", JSON.stringify({
+      name: user.username,
+      email: user.email,
+      avatar: user.avatar_url
+    }));
     location.href = "./store/store.html";
   }
 });
