@@ -1,22 +1,21 @@
 * {
   box-sizing: border-box;
   margin: 0;
-  padding: 0;
-  font-family: "Segoe UI", system-ui, sans-serif;
+  font-family: system-ui, sans-serif;
 }
 
 body {
-  background: #f5f5f5;
+  background: #f6f6f6;
 }
 
 /* HEADER */
 .header {
-  background: orange;
-  color: white;
-  padding: 14px 20px;
   display: flex;
   align-items: center;
   gap: 16px;
+  padding: 14px 20px;
+  background: orange;
+  color: white;
 }
 
 .logo {
@@ -26,17 +25,17 @@ body {
 
 .header input {
   flex: 1;
-  max-width: 400px;
+  max-width: 420px;
   padding: 10px 16px;
-  border-radius: 30px;
+  border-radius: 25px;
   border: none;
   outline: none;
 }
 
 .icons {
   display: flex;
-  align-items: center;
   gap: 14px;
+  align-items: center;
 }
 
 .icons span {
@@ -46,12 +45,11 @@ body {
 
 .icons button {
   border: none;
-  background: white;
-  color: orange;
   padding: 6px 14px;
   border-radius: 20px;
+  background: white;
+  color: orange;
   cursor: pointer;
-  font-weight: bold;
 }
 
 /* TABS */
@@ -61,6 +59,7 @@ body {
   padding: 14px;
   background: white;
   overflow-x: auto;
+  border-bottom: 1px solid #eee;
 }
 
 .tabs button {
@@ -77,7 +76,7 @@ body {
 }
 
 /* PRODUCTS */
-.products {
+.grid {
   padding: 24px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -89,12 +88,12 @@ body {
   border-radius: 14px;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 8px 22px rgba(0,0,0,.08);
-  transition: .2s;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transition: 0.2s;
 }
 
 .product:hover {
-  transform: translateY(-6px);
+  transform: translateY(-5px);
 }
 
 .product img {
