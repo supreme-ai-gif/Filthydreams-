@@ -81,7 +81,7 @@ function renderProducts() {
       </div>
     `;
     div.onclick = () => {
-      location.href = `/product.html?id=${p.id}`;
+      location.href = `./product.html?id=${p.id}`;
     };
     productsEl.appendChild(div);
   });
