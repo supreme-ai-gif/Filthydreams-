@@ -81,23 +81,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     productsContainer.innerHTML = "";
 
     data?.filter(p => p.name.toLowerCase().includes(search))
-      .forEach(p => {
-        const card = document.createElement("div");
-        card.className = "product-card";
-        card.innerHTML = `
-          <img src="${p.image_url}">
-          <div class="info">
-            <h4>${p.name}</h4>
-            <span>$${p.price}</span>
-          </div>
-        `;
-        card.onclick = () => {
-          localStorage.setItem("currentProduct", JSON.stringify(p));
-          location.href = "./product.html";
-        };
-        productsContainer.appendChild(card);
-      });
-  }
+      products.forEach(p => {
+  const card = document.createElement("div");
+  card.className = "product-card";
+
+  card.innerHTML = `
+    <img src="${p.image_url}" alt="${p.name}">
+    <div class="product-info">
+      <h4>${p.name}</h4>
+      <span class="price">$${p.price}</span>
+    </div>
+  `;
+
+  // ✅ ADD THIS PART (THIS IS THE CONNECTION)
+  card.addEventListener("click", () => {
+    window.location.href = `product.html?id=${p.id}`;
+  });
+
+  storeProducts.appendChild(card);
+});
+ }
 
   searchBar.oninput = loadProducts;
 
