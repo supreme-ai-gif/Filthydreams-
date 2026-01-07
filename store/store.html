@@ -4,31 +4,26 @@
   <meta charset="UTF-8">
   <title>FilthyDreams Store</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="./store.css">
 </head>
 <body>
 
-<header class="store-header">
+<header class="header">
   <h1 class="logo">FilthyDreams</h1>
 
-  <input id="searchBar" type="text" placeholder="Search products...">
+  <input id="searchInput" placeholder="Search products...">
 
-  <div class="header-actions">
-    <span id="cartIcon" title="Cart">🛒</span>
-    <span id="profileIcon" title="Profile">👤</span>
+  <div class="icons">
+    <span onclick="location.href='cart.html'">🛒</span>
+    <span onclick="location.href='profile.html'">👤</span>
     <button id="logoutBtn">Logout</button>
   </div>
 </header>
 
-<!-- TABS -->
-<nav id="tabsNav" class="tabs"></nav>
+<nav id="tabs" class="tabs"></nav>
 
-<!-- PRODUCTS -->
-<main id="productsContainer" class="products-grid"></main>
+<main id="products" class="products"></main>
 
-<script type="module" src="../js/env.js"></script>
-<script type="module" src="./store-ui.js"></script>
+<script type="module" src="./store.js"></script>
 </body>
 </html>
