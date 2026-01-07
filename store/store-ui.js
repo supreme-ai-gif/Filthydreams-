@@ -13,62 +13,135 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ----------------------------
   // ELEMENTS (MATCH YOUR HTML)
   // ----------------------------
+  const tabsNav = document.getElementById("tabsNav");
   const productsContainer = document.getElementById("productsContainer");
   const searchBar = document.getElementById("searchBar");
 
-  // sidebar buttons (template routing)
   const profileBtn = document.getElementById("profileBtn");
   const cartBtn = document.getElementById("cartBtn");
   const logoutBtn = document.getElementById("logoutBtn");
 
   // ----------------------------
-  // SIDEBAR TEMPLATE NAVIGATION
+  // STATE
   // ----------------------------
-  profileBtn.onclick = () => {
-    window.location.href = "./profile.html";
-  };
+  let allProducts = [];
+  let currentTab = "all";
+  let allTabs = [];
 
-  cartBtn.onclick = () => {
-    window.location.href = "./cart.html";
-  };
-
+  // ----------------------------
+  // SIDEBAR TEMPLATE ROUTING
+  // ----------------------------
+  profileBtn.onclick = () => location.href = "./profile.html";
+  cartBtn.onclick = () => location.href = "./cart.html";
   logoutBtn.onclick = () => {
     localStorage.clear();
-    window.location.href = "../index.html";
+    location.href = "../index.html";
   };
 
   // ----------------------------
-  // LOAD PRODUCTS (NO TABS YET)
+  // LOAD TABS
+  // ----------------------------
+  async function loadTabs() {
+    const { data, error } = await supabase
+      .from("tabs")
+      .select("*")
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      console.error("Tabs error:", error);
+      return;
+    }
+
+    allTabs = data || [];
+    renderTabs();
+  }
+
+  function renderTabs() {
+    tabsNav.innerHTML = "";
+
+    // ALL TAB
+    createTabButton("All", "all");
+
+    // ADMIN TABS
+    allTabs.forEach(tab => {
+      createTabButton(tab.name, tab.id);
+    });
+  }
+
+  function createTabButton(name, id) {
+    const btn = document.createElement("button");
+    btn.textContent = name;
+    btn.className = id === currentTab ? "active" : "";
+
+    btn.onclick = () => {
+      currentTab = id;
+      updateActiveTabs();
+      renderProducts();
+    };
+
+    tabsNav.appendChild(btn);
+  }
+
+  function updateActiveTabs() {
+    [...tabsNav.children].forEach(btn => {
+      btn.classList.remove("active");
+      if (
+        (btn.textContent === "All" && currentTab === "all") ||
+        btn.textContent === getTabNameById(currentTab)
+      ) {
+        btn.classList.add("active");
+      }
+    });
+  }
+
+  function getTabNameById(id) {
+    if (id === "all") return "All";
+    const tab = allTabs.find(t => t.id === id);
+    return tab ? tab.name : "";
+  }
+
+  // ----------------------------
+  // LOAD PRODUCTS (ONCE)
   // ----------------------------
   async function loadProducts() {
-    productsContainer.innerHTML = "";
-
     const { data, error } = await supabase
       .from("products")
       .select("*")
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Supabase error:", error);
-      productsContainer.innerHTML = "<p>Error loading products</p>";
+      console.error("Products error:", error);
       return;
     }
 
-    if (!data || data.length === 0) {
-      productsContainer.innerHTML = "<p>No products found</p>";
-      return;
-    }
-
-    renderProducts(data);
+    allProducts = data || [];
+    renderProducts();
   }
 
   // ----------------------------
   // RENDER PRODUCTS
   // ----------------------------
-  function renderProducts(products) {
+  function renderProducts() {
     productsContainer.innerHTML = "";
 
-    products.forEach(p => {
+    let filtered = [...allProducts];
+
+    // FILTER BY TAB
+    if (currentTab !== "all") {
+      filtered = filtered.filter(p => p.tab_id === currentTab);
+    }
+
+    // SEARCH FILTER
+    const q = searchBar.value.trim().toLowerCase();
+    if (q) {
+      filtered = filtered.filter(p =>
+        p.name.toLowerCase().includes(q)
+      );
+    }
+
+    if (filtered.length === 0) return;
+
+    filtered.forEach(p => {
       const card = document.createElement("div");
       card.className = "product-card";
 
@@ -80,9 +153,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
       `;
 
-      // product page navigation
       card.onclick = () => {
-        window.location.href = `product.html?id=${p.id}`;
+        location.href = `product.html?id=${p.id}`;
       };
 
       productsContainer.appendChild(card);
@@ -90,23 +162,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ----------------------------
-  // SEARCH (CLIENT SIDE)
+  // SEARCH LISTENER
   // ----------------------------
-  searchBar.addEventListener("input", async (e) => {
-    const q = e.target.value.toLowerCase();
-
-    const { data } = await supabase.from("products").select("*");
-
-    const filtered = data.filter(p =>
-      p.name.toLowerCase().includes(q)
-    );
-
-    renderProducts(filtered);
+  searchBar.addEventListener("input", () => {
+    renderProducts();
   });
 
   // ----------------------------
   // INIT
   // ----------------------------
+  await loadTabs();
   await loadProducts();
 
 });
