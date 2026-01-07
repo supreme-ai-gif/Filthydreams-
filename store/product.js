@@ -46,6 +46,27 @@ async function loadProduct() {
       </div>
     </section>
   `;
+
+  // ===== CONNECT "ADD TO CART" =====
+  const addBtn = container.querySelector(".buy-btn");
+  addBtn.addEventListener("click", async () => {
+    const userId = localStorage.getItem("userId"); // must be set on login
+    if (!userId) return alert("Please login first");
+
+    // Add or update cart
+    await supabase
+      .from("cart")
+      .upsert(
+        {
+          user_id: userId,
+          product_id: data.id,
+          quantity: 1,
+        },
+        { onConflict: ["user_id", "product_id"] }
+      );
+
+    alert("Added to cart!");
+  });
 }
 
 loadProduct();
