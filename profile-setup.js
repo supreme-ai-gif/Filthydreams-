@@ -8,12 +8,14 @@ const avatarPreview = document.getElementById("avatarPreview");
 const avatarInput = document.getElementById("avatarInput");
 const profileForm = document.getElementById("profileForm");
 const emailInput = document.getElementById("email");
+const nameInput = document.getElementById("name");
+const countryInput = document.getElementById("country");
 
 let avatarFile = null;
 
-// --- CHECK USER ID ---
-const userId = localStorage.getItem("userId");
-if (!userId) {
+// --- GET CURRENT USER ---
+const { data: { user } } = await supabase.auth.getUser();
+if (!user) {
   alert("Not logged in!");
   location.href = "../index.html";
 }
@@ -35,7 +37,9 @@ avatarInput.addEventListener("change", () => {
 profileForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const email = emailInput.value.trim();
-  if (!email) return alert("Enter your email");
+  const name = nameInput.value.trim();
+  const country = countryInput.value.trim();
+  if (!email || !name || !country) return alert("Fill in all fields");
 
   let avatarUrl = null;
 
@@ -51,15 +55,18 @@ profileForm.addEventListener("submit", async (e) => {
   // Update user in Supabase
   const { error } = await supabase.from("users").update({
     email,
+    name,
+    country,
     avatar_url: avatarUrl
-  }).eq("id", userId);
+  }).eq("id", user.id);
 
-  if (error) return alert("Failed to save profile");
+  if (error) return alert("Failed to save profile. Check RLS policy!");
 
   // Save profile locally
   localStorage.setItem("userProfile", JSON.stringify({
-    name: email.split("@")[0],
+    name,
     email,
+    country,
     avatar: avatarUrl || ""
   }));
 
