@@ -11,117 +11,64 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
 
   // ----------------------------
-  // ELEMENTS (MATCHING YOUR HTML)
+  // ELEMENTS (MATCH YOUR HTML)
   // ----------------------------
-  const tabsNav = document.getElementById("tabsNav");
   const productsContainer = document.getElementById("productsContainer");
   const searchBar = document.getElementById("searchBar");
 
-  let currentTab = "all";
-  let allProducts = [];
+  // sidebar buttons (template routing)
+  const profileBtn = document.getElementById("profileBtn");
+  const cartBtn = document.getElementById("cartBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
 
   // ----------------------------
-  // LOAD TABS
+  // SIDEBAR TEMPLATE NAVIGATION
   // ----------------------------
-  async function loadTabs() {
-    const { data: tabs, error } = await supabase
-      .from("tabs")
-      .select("*")
-      .order("created_at", { ascending: true });
+  profileBtn.onclick = () => {
+    window.location.href = "./profile.html";
+  };
 
-    if (error) {
-      console.error("Failed to load tabs:", error);
-      return;
-    }
+  cartBtn.onclick = () => {
+    window.location.href = "./cart.html";
+  };
 
-    tabsNav.innerHTML = "";
-
-    // ALL TAB
-    renderTab("All", "all");
-
-    // ADMIN CREATED TABS
-    tabs.forEach(tab => {
-      renderTab(tab.name, tab.id);
-    });
-  }
-
-  function renderTab(name, id) {
-    const btn = document.createElement("button");
-    btn.textContent = name;
-
-    if (currentTab === id) btn.classList.add("active");
-
-    btn.addEventListener("click", () => {
-      currentTab = id;
-      updateActiveTabs();
-      renderProducts();
-    });
-
-    tabsNav.appendChild(btn);
-  }
-
-  function updateActiveTabs() {
-    [...tabsNav.children].forEach(btn => btn.classList.remove("active"));
-
-    [...tabsNav.children].forEach(btn => {
-      if (
-        (btn.textContent === "All" && currentTab === "all") ||
-        btn.textContent !== "All" && btn.textContent === getTabName(currentTab)
-      ) {
-        btn.classList.add("active");
-      }
-    });
-  }
-
-  function getTabName(tabId) {
-    const tabBtn = [...tabsNav.children].find(b => b.dataset?.id === tabId);
-    return tabBtn ? tabBtn.textContent : "";
-  }
+  logoutBtn.onclick = () => {
+    localStorage.clear();
+    window.location.href = "../index.html";
+  };
 
   // ----------------------------
-  // LOAD PRODUCTS
+  // LOAD PRODUCTS (NO TABS YET)
   // ----------------------------
   async function loadProducts() {
+    productsContainer.innerHTML = "";
+
     const { data, error } = await supabase
       .from("products")
       .select("*")
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Failed to load products:", error);
+      console.error("Supabase error:", error);
+      productsContainer.innerHTML = "<p>Error loading products</p>";
       return;
     }
 
-    allProducts = data || [];
-    renderProducts();
+    if (!data || data.length === 0) {
+      productsContainer.innerHTML = "<p>No products found</p>";
+      return;
+    }
+
+    renderProducts(data);
   }
 
   // ----------------------------
   // RENDER PRODUCTS
   // ----------------------------
-  function renderProducts() {
+  function renderProducts(products) {
     productsContainer.innerHTML = "";
 
-    let filtered = [...allProducts];
-
-    // FILTER BY TAB
-    if (currentTab !== "all") {
-      filtered = filtered.filter(p => p.tab_id === currentTab);
-    }
-
-    // SEARCH
-    const query = searchBar.value.trim().toLowerCase();
-    if (query) {
-      filtered = filtered.filter(p =>
-        p.name.toLowerCase().includes(query)
-      );
-    }
-
-    if (filtered.length === 0) {
-      return; // empty state handled by CSS
-    }
-
-    filtered.forEach(p => {
+    products.forEach(p => {
       const card = document.createElement("div");
       card.className = "product-card";
 
@@ -133,26 +80,33 @@ document.addEventListener("DOMContentLoaded", async () => {
         </div>
       `;
 
-      // 👉 GO TO PRODUCT PAGE
-      card.addEventListener("click", () => {
+      // product page navigation
+      card.onclick = () => {
         window.location.href = `product.html?id=${p.id}`;
-      });
+      };
 
       productsContainer.appendChild(card);
     });
   }
 
   // ----------------------------
-  // SEARCH
+  // SEARCH (CLIENT SIDE)
   // ----------------------------
-  searchBar.addEventListener("input", () => {
-    renderProducts();
+  searchBar.addEventListener("input", async (e) => {
+    const q = e.target.value.toLowerCase();
+
+    const { data } = await supabase.from("products").select("*");
+
+    const filtered = data.filter(p =>
+      p.name.toLowerCase().includes(q)
+    );
+
+    renderProducts(filtered);
   });
 
   // ----------------------------
   // INIT
   // ----------------------------
-  await loadTabs();
   await loadProducts();
 
 });
