@@ -1,109 +1,93 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-const SUPABASE_URL = window.__ENV__.SUPABASE_URL;
-const SUPABASE_ANON_KEY = window.__ENV__.SUPABASE_ANON_KEY;
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = createClient(
+  "YOUR_SUPABASE_URL",
+  "YOUR_SUPABASE_ANON_KEY"
+);
 
-const tabsNav = document.getElementById("tabsNav");
-const productsContainer = document.getElementById("productsContainer");
-const searchBar = document.getElementById("searchBar");
+const tabsEl = document.getElementById("tabs");
+const productsEl = document.getElementById("products");
+const searchInput = document.getElementById("searchInput");
+const logoutBtn = document.getElementById("logoutBtn");
 
 let currentTab = "all";
 let allProducts = [];
 
-/* ---------------- LOGOUT ---------------- */
-document.getElementById("logoutBtn").onclick = () => {
+/* LOGOUT */
+logoutBtn.onclick = () => {
   localStorage.clear();
   location.href = "../login.html";
 };
 
-/* ---------------- LOAD TABS ---------------- */
+/* LOAD TABS */
 async function loadTabs() {
-  const { data, error } = await supabase.from("tabs").select("*");
-  if (error) return console.error(error);
+  const { data } = await supabase.from("tabs").select("*");
+  tabsEl.innerHTML = "";
 
-  tabsNav.innerHTML = "";
+  createTab("All", "all");
 
-  createTabButton("All", "all");
-
-  data.forEach(tab => {
-    createTabButton(tab.name, tab.id);
-  });
+  data.forEach(t => createTab(t.name, t.id));
 }
 
-function createTabButton(name, id) {
+/* CREATE TAB BUTTON */
+function createTab(name, id) {
   const btn = document.createElement("button");
   btn.textContent = name;
-  btn.className = id === currentTab ? "active" : "";
+  if (currentTab === id) btn.classList.add("active");
 
   btn.onclick = () => {
     currentTab = id;
-    document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".tabs button")
+      .forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
     renderProducts();
   };
 
-  tabsNav.appendChild(btn);
+  tabsEl.appendChild(btn);
 }
 
-/* ---------------- LOAD PRODUCTS ---------------- */
+/* LOAD PRODUCTS */
 async function loadProducts() {
-  const { data, error } = await supabase.from("products").select("*");
-  if (error) return console.error(error);
-
-  allProducts = data;
+  const { data } = await supabase.from("products").select("*");
+  allProducts = data || [];
   renderProducts();
 }
 
+/* RENDER PRODUCTS */
 function renderProducts() {
-  productsContainer.innerHTML = "";
-
-  const search = searchBar.value.toLowerCase();
+  productsEl.innerHTML = "";
 
   const filtered = allProducts.filter(p => {
-    const matchesTab = currentTab === "all" || p.tab_id === currentTab;
-    const matchesSearch = p.name.toLowerCase().includes(search);
-    return matchesTab && matchesSearch;
+    if (currentTab !== "all" && p.tab_id !== currentTab) return false;
+    if (searchInput.value &&
+        !p.name.toLowerCase().includes(searchInput.value.toLowerCase()))
+      return false;
+    return true;
   });
 
-  if (filtered.length === 0) {
-    productsContainer.innerHTML = "<p>No products found</p>";
+  if (!filtered.length) {
+    productsEl.innerHTML = "<p>No products found</p>";
     return;
   }
 
   filtered.forEach(p => {
-    const card = document.createElement("div");
-    card.className = "product-card";
-
-    card.innerHTML = `
+    const div = document.createElement("div");
+    div.className = "product";
+    div.innerHTML = `
       <img src="${p.image_url}">
       <div class="info">
         <h4>${p.name}</h4>
         <span>$${p.price}</span>
       </div>
     `;
-
-    // ✅ THIS IS THE IMPORTANT PART
-    card.addEventListener("click", () => {
-      window.location.href = "./product.html?id=" + p.id;
-    });
-
-    productsContainer.appendChild(card);
+    div.onclick = () => {
+      location.href = `product.html?id=${p.id}`;
+    };
+    productsEl.appendChild(div);
   });
 }
 
-/* ---------------- SEARCH ---------------- */
-searchBar.addEventListener("input", renderProducts);
+searchInput.oninput = renderProducts;
 
-/* ---------------- HEADER ICONS ---------------- */
-document.getElementById("cartIcon").onclick = () => {
-  location.href = "./cart.html";
-};
-
-document.getElementById("profileIcon").onclick = () => {
-  location.href = "./profile.html";
-};
-
-/* ---------------- INIT ---------------- */
 loadTabs();
 loadProducts();
