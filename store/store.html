@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>FilthyDreams Store</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="./store.css">
 </head>
 <body>
@@ -11,19 +11,20 @@
 <header class="header">
   <h1 class="logo">FilthyDreams</h1>
 
-  <input id="searchInput" placeholder="Search products...">
+  <input id="searchBar" placeholder="Search products..." />
 
   <div class="icons">
-    <span onclick="location.href='cart.html'">🛒</span>
-    <span onclick="location.href='profile.html'">👤</span>
+    <span id="cartBtn">🛒</span>
+    <span id="profileBtn">👤</span>
     <button id="logoutBtn">Logout</button>
   </div>
 </header>
 
-<nav id="tabs" class="tabs"></nav>
+<nav id="tabsNav" class="tabs"></nav>
 
-<main id="products" class="products"></main>
+<main id="productsContainer" class="grid"></main>
 
-<script type="module" src="./store.js"></script>
+<script type="module" src="../js/env.js"></script>
+<script type="module" src="./store-ui.js"></script>
 </body>
 </html>
