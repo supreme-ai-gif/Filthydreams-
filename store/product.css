@@ -1,34 +1,44 @@
 body {
-  background: #f5f5f5;
-  font-family: "Segoe UI", system-ui, sans-serif;
+  background: #f6f6f6;
+  font-family: system-ui;
 }
 
-.header {
+.product-header {
   background: orange;
   color: white;
-  padding: 14px 20px;
+  padding: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.product-header button {
+  border: none;
+  background: white;
+  color: orange;
+  padding: 6px 12px;
+  border-radius: 20px;
   cursor: pointer;
 }
 
-#productPage {
+#productBox {
   display: flex;
   justify-content: center;
   padding: 30px;
 }
 
-.product-box {
+.layout {
   background: white;
-  max-width: 900px;
-  width: 100%;
   border-radius: 16px;
   padding: 30px;
+  max-width: 900px;
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
-  box-shadow: 0 15px 40px rgba(0,0,0,.1);
 }
 
-.product-box img {
+.layout img {
   width: 100%;
   border-radius: 14px;
 }
@@ -39,19 +49,12 @@ body {
   font-weight: bold;
 }
 
-button {
+.buy {
   margin-top: 20px;
-  padding: 14px 30px;
-  border: none;
+  padding: 14px 28px;
   background: orange;
   color: white;
+  border: none;
   border-radius: 30px;
-  font-size: 16px;
   cursor: pointer;
-}
-
-@media (max-width: 768px) {
-  .product-box {
-    grid-template-columns: 1fr;
-  }
 }
