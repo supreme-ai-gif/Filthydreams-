@@ -15,7 +15,7 @@ let products = [];
 /* LOGOUT */
 document.getElementById("logoutBtn").onclick = () => {
   localStorage.clear();
-  location.href = "../login.html";
+  location.href = "../index.html";
 };
 
 document.getElementById("cartBtn").onclick = () => location.href = "./cart.html";
