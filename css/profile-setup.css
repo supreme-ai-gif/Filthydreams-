@@ -5,81 +5,140 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: "Segoe UI", system-ui, sans-serif;
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 body {
-  background: #f6f6f6;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ff8a00, #ffb347);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #222;
 }
 
 /* =========================
    CONTAINER
 ========================= */
-.setup-container {
-  max-width: 400px;
-  margin: 80px auto;
-  padding: 30px;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+.profile-setup-container {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 32px 28px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  animation: fadeUp 0.6s ease;
+}
+
+/* =========================
+   TITLE
+========================= */
+.profile-setup-container h1 {
   text-align: center;
+  font-size: 26px;
+  margin-bottom: 8px;
+  color: #ff7a00;
 }
 
-.setup-container h1 {
-  margin-bottom: 10px;
-  color: orange;
-}
-
-.setup-container p {
+.profile-setup-container p.subtitle {
+  text-align: center;
   font-size: 14px;
   color: #666;
-  margin-bottom: 20px;
+  margin-bottom: 26px;
 }
 
 /* =========================
    FORM
 ========================= */
-.form {
+.profile-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 16px;
 }
 
-.form input {
-  padding: 12px 16px;
+.profile-form label {
+  font-size: 13px;
+  color: #444;
+  font-weight: 500;
+}
+
+.profile-form input,
+.profile-form select {
+  width: 100%;
+  padding: 13px 15px;
   border-radius: 10px;
   border: 1px solid #ddd;
   outline: none;
-  font-size: 14px;
+  font-size: 15px;
+  transition: border 0.2s, box-shadow 0.2s;
 }
 
-.form input:focus {
-  border-color: orange;
+.profile-form input:focus,
+.profile-form select:focus {
+  border-color: #ff8a00;
+  box-shadow: 0 0 0 3px rgba(255, 138, 0, 0.15);
 }
 
-.btn.primary {
-  background: orange;
-  color: white;
+/* =========================
+   BUTTON
+========================= */
+.profile-form button {
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 30px;
   border: none;
-  padding: 12px;
-  border-radius: 12px;
-  cursor: pointer;
+  background: linear-gradient(135deg, #ff7a00, #ff9f43);
+  color: white;
+  font-size: 16px;
   font-weight: 600;
-  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.btn.primary:hover {
+.profile-form button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(255,122,0,0.4);
+  box-shadow: 0 12px 30px rgba(255, 122, 0, 0.35);
+}
+
+.profile-form button:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 20px rgba(255, 122, 0, 0.25);
+}
+
+/* =========================
+   FOOT NOTE
+========================= */
+.profile-note {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 12px;
+  color: #888;
+}
+
+/* =========================
+   ANIMATION
+========================= */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* =========================
    RESPONSIVE
 ========================= */
-@media (max-width: 500px) {
-  .setup-container {
-    margin: 40px 20px;
-    padding: 20px;
+@media (max-width: 480px) {
+  .profile-setup-container {
+    padding: 26px 22px;
+    border-radius: 14px;
+  }
+
+  .profile-setup-container h1 {
+    font-size: 24px;
   }
 }
