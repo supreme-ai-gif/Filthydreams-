@@ -5,13 +5,12 @@ const supabase = createClient(
   window.__ENV__.SUPABASE_ANON_KEY
 );
 
-// Elements
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
 const showRegister = document.getElementById("showRegister");
 const showLogin = document.getElementById("showLogin");
 
-// Toggle forms
+/* TOGGLE */
 showRegister.onclick = e => {
   e.preventDefault();
   loginForm.classList.add("hidden");
@@ -24,69 +23,44 @@ showLogin.onclick = e => {
   loginForm.classList.remove("hidden");
 };
 
-/* =====================
-   REGISTER
-===================== */
-registerForm.addEventListener("submit", async e => {
+/* REGISTER */
+registerForm.onsubmit = async e => {
   e.preventDefault();
 
   const username = registerForm.registerUsername.value.trim();
   const password = registerForm.registerPassword.value.trim();
 
-  // Check existing user
-  const { data: exists, error: checkErr } = await supabase
+  const { data: exists } = await supabase
     .from("users")
     .select("id")
     .eq("username", username);
 
-  if (checkErr) {
-    alert("Database error");
-    return;
-  }
+  if (exists.length) return alert("Username already exists");
 
-  if (exists.length > 0) {
-    alert("Username already exists");
-    return;
-  }
-
-  // Insert new user
   const { data, error } = await supabase
     .from("users")
-    .insert({
-      username,
-      password,
-      email: null,
-      country: null
-    })
+    .insert({ username, password })
     .select()
     .single();
 
   if (error) {
     console.error(error);
-    alert("Registration failed");
-    return;
+    return alert("Registration failed");
   }
 
-  // Save login
   localStorage.setItem("userId", data.id);
-  localStorage.setItem("username", data.username);
-
-  // Go to profile setup
   location.href = "./profile-setup.html";
-});
+};
 
-/* =====================
-   LOGIN
-===================== */
-loginForm.addEventListener("submit", async e => {
+/* LOGIN */
+loginForm.onsubmit = async e => {
   e.preventDefault();
 
   const username = loginForm.loginUsername.value.trim();
   const password = loginForm.loginPassword.value.trim();
 
-  // Admin shortcut
+  // Admin
   if (username === "admin" && password === "1234") {
-    localStorage.setItem("isAdmin", "true");
     location.href = "./admin/admin.html";
     return;
   }
@@ -98,19 +72,13 @@ loginForm.addEventListener("submit", async e => {
     .eq("password", password)
     .single();
 
-  if (error || !data) {
-    alert("Invalid login");
-    return;
-  }
+  if (error || !data) return alert("Invalid login");
 
-  // Save session
   localStorage.setItem("userId", data.id);
-  localStorage.setItem("username", data.username);
 
-  // If profile incomplete → setup
-  if (!data.email || !data.country) {
+  if (!data.name || !data.email || !data.country) {
     location.href = "./profile-setup.html";
   } else {
     location.href = "./store/store.html";
   }
-});
+};
