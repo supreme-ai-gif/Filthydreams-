@@ -1,48 +1,94 @@
+/* =========================
+   RESET / BASE
+========================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
 body {
-  font-family: "Segoe UI", sans-serif;
   background: #f6f6f6;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   min-height: 100vh;
 }
 
+/* =========================
+   PROFILE CONTAINER
+========================= */
 .profile-container {
   background: white;
   padding: 40px 30px;
   border-radius: 16px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-  width: 100%;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.12);
   max-width: 400px;
+  width: 100%;
   text-align: center;
 }
 
 .profile-container h1 {
-  margin-bottom: 30px;
   color: orange;
+  margin-bottom: 10px;
+  font-size: 28px;
 }
 
-.profile-form input {
-  width: 100%;
-  padding: 12px 15px;
-  margin-bottom: 18px;
+.profile-container p {
+  color: #555;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+/* =========================
+   FORM
+========================= */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+input[type="text"],
+input[type="email"] {
+  padding: 14px 16px;
   border-radius: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
+  outline: none;
   font-size: 16px;
+  transition: border-color 0.2s;
 }
 
-.profile-form .btn {
-  width: 100%;
-  padding: 14px 0;
-  border: none;
-  border-radius: 10px;
+input:focus {
+  border-color: orange;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.btn.primary {
   background: orange;
   color: white;
-  font-size: 18px;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background .2s;
+  transition: background 0.2s, transform 0.2s;
 }
 
-.profile-form .btn:hover {
+.btn.primary:hover {
   background: #ff7a00;
+  transform: translateY(-2px);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 480px) {
+  .profile-container {
+    padding: 30px 20px;
+  }
 }
