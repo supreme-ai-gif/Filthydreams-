@@ -1,11 +1,8 @@
-/* =========================
-   RESET / BASE
-========================= */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "Segoe UI", system-ui, sans-serif;
 }
 
 body {
@@ -14,75 +11,64 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #222;
 }
 
-/* =========================
-   CONTAINER
-========================= */
-.profile-setup-container {
+.profile-wrapper {
   width: 100%;
+  padding: 20px;
+}
+
+.profile-card {
   max-width: 420px;
-  background: #ffffff;
+  margin: auto;
+  background: white;
   border-radius: 18px;
   padding: 32px 28px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-  animation: fadeUp 0.6s ease;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+  animation: slideUp 0.5s ease;
 }
 
-/* =========================
-   TITLE
-========================= */
-.profile-setup-container h1 {
+.profile-card h1 {
   text-align: center;
-  font-size: 26px;
-  margin-bottom: 8px;
   color: #ff7a00;
+  margin-bottom: 6px;
 }
 
-.profile-setup-container p.subtitle {
+.subtitle {
   text-align: center;
   font-size: 14px;
   color: #666;
   margin-bottom: 26px;
 }
 
-/* =========================
-   FORM
-========================= */
-.profile-form {
+form {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.profile-form label {
+label {
   font-size: 13px;
   color: #444;
-  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.profile-form input,
-.profile-form select {
-  width: 100%;
-  padding: 13px 15px;
+input {
+  padding: 13px 14px;
   border-radius: 10px;
   border: 1px solid #ddd;
-  outline: none;
   font-size: 15px;
-  transition: border 0.2s, box-shadow 0.2s;
 }
 
-.profile-form input:focus,
-.profile-form select:focus {
+input:focus {
+  outline: none;
   border-color: #ff8a00;
-  box-shadow: 0 0 0 3px rgba(255, 138, 0, 0.15);
+  box-shadow: 0 0 0 3px rgba(255,138,0,0.15);
 }
 
-/* =========================
-   BUTTON
-========================= */
-.profile-form button {
+button {
   margin-top: 10px;
   padding: 14px;
   border-radius: 30px;
@@ -92,33 +78,22 @@ body {
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform .15s, box-shadow .15s;
 }
 
-.profile-form button:hover {
+button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(255, 122, 0, 0.35);
+  box-shadow: 0 12px 30px rgba(255,122,0,0.35);
 }
 
-.profile-form button:active {
-  transform: translateY(0);
-  box-shadow: 0 8px 20px rgba(255, 122, 0, 0.25);
-}
-
-/* =========================
-   FOOT NOTE
-========================= */
-.profile-note {
+.note {
   margin-top: 18px;
   text-align: center;
   font-size: 12px;
   color: #888;
 }
 
-/* =========================
-   ANIMATION
-========================= */
-@keyframes fadeUp {
+@keyframes slideUp {
   from {
     opacity: 0;
     transform: translateY(25px);
@@ -126,19 +101,5 @@ body {
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-@media (max-width: 480px) {
-  .profile-setup-container {
-    padding: 26px 22px;
-    border-radius: 14px;
-  }
-
-  .profile-setup-container h1 {
-    font-size: 24px;
   }
 }
