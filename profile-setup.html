@@ -8,23 +8,25 @@
 </head>
 <body>
 
-<div class="profile-container">
-  <h1>Set up your profile</h1>
+  <div class="profile-container">
+    <h1>Setup Your Profile</h1>
 
-  <div class="avatar-section">
-    <img id="avatarPreview" src="./default-avatar.png" alt="Avatar">
-    <input type="file" id="avatarInput" accept="image/*">
+    <div class="avatar-section">
+      <img id="avatarPreview" src="./default-avatar.png" alt="Avatar Preview">
+      <input type="file" id="avatarInput" accept="image/*">
+    </div>
+
+    <form id="profileForm">
+      <input type="text" id="fullName" placeholder="Full Name" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="text" id="country" placeholder="Country" required>
+      <button type="submit" class="btn primary">Save Profile</button>
+    </form>
+
+    <p id="errorMsg" class="error"></p>
   </div>
 
-  <form id="profileForm">
-    <input type="text" id="name" placeholder="Full Name" required>
-    <input type="email" id="email" placeholder="Email" required>
-    <input type="text" id="country" placeholder="Country" required>
-    <button type="submit" class="btn primary">Save Profile</button>
-  </form>
-</div>
-
-<script type="module" src="../js/env.js"></script>
-<script type="module" src="./profile-setup.js"></script>
+  <script type="module" src="../js/env.js"></script>
+  <script type="module" src="./profile-setup.js"></script>
 </body>
 </html>
