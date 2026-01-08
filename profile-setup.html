@@ -1,43 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Complete Profile</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <link rel="stylesheet" href="../css/profile-setup.css" />
+  <meta charset="UTF-8">
+  <title>Profile Setup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../css/profile-setup.css">
 </head>
 <body>
+  <div class="profile-container">
+    <h1>Complete Your Profile</h1>
 
-  <div class="profile-wrapper">
-    <div class="profile-card">
-      <h1>Complete Your Profile</h1>
-      <p class="subtitle">Just a few more details to continue</p>
-
-      <form id="profileForm">
-        <label>
-          Full Name
-          <input type="text" id="name" required />
-        </label>
-
-        <label>
-          Email Address
-          <input type="email" id="email" required />
-        </label>
-
-        <label>
-          Country
-          <input type="text" id="country" required />
-        </label>
-
-        <button type="submit">Save Profile</button>
-      </form>
-
-      <p class="note">You can update this later in your account.</p>
-    </div>
+    <form id="profileForm" class="profile-form">
+      <input type="text" id="name" placeholder="Full Name" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="text" id="country" placeholder="Country" required>
+      <button type="submit" class="btn primary">Save Profile</button>
+    </form>
   </div>
 
-  <script type="module" src="./js/env.js"></script>
   <script type="module" src="./profile-setup.js"></script>
 </body>
 </html>
