@@ -64,5 +64,5 @@ profileForm.addEventListener("submit", async (e) => {
   }
 
   alert("Profile saved successfully!");
-  location.href = "./store/store.html"; // Redirect to store after setup
+  location.href = "../store/store.html"; // Redirect to store after setup
 });
