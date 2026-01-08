@@ -4,7 +4,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
+  margin: 0;
 }
 
 .profile-container {
@@ -23,26 +24,30 @@ body {
   color: orange;
 }
 
+/* ===== Avatar Section ===== */
 .avatar-section {
-  margin-bottom: 20px;
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 20px auto;
 }
 
 #avatarPreview {
-  width: 120px;
-  height: 120px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
-  background: #ffedd5;
   object-fit: cover;
-  margin-bottom: 10px;
   border: 2px solid orange;
+  background: #ffe8d6;
 }
 
 #avatarInput {
   display: block;
-  margin: 0 auto;
+  margin: 10px auto 0 auto;
 }
 
-form input {
+/* ===== Form Inputs ===== */
+form input, form select {
   width: 100%;
   padding: 12px 15px;
   margin-bottom: 15px;
@@ -63,4 +68,10 @@ form input {
 
 .btn.primary:hover {
   background: #ff8c1a;
+}
+
+.error {
+  color: red;
+  margin-top: 12px;
+  font-size: 14px;
 }
