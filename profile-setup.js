@@ -5,26 +5,17 @@ const supabase = createClient(
   window.__ENV__.SUPABASE_ANON_KEY
 );
 
-// Elements
-const profileForm = document.getElementById("profileForm");
+const form = document.getElementById("profileForm");
 
-profileForm.addEventListener("submit", async (e) => {
+form.onsubmit = async e => {
   e.preventDefault();
 
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const country = document.getElementById("country").value.trim();
-
-  if (!name || !email || !country) {
-    return alert("Please fill all fields");
-  }
-
   const userId = localStorage.getItem("userId");
-  if (!userId) {
-    alert("Not logged in");
-    location.href = "../index.html";
-    return;
-  }
+  if (!userId) return location.href = "./index.html";
+
+  const name = nameInput.value.trim();
+  const email = emailInput.value.trim();
+  const country = countryInput.value.trim();
 
   const { error } = await supabase
     .from("users")
@@ -33,16 +24,8 @@ profileForm.addEventListener("submit", async (e) => {
 
   if (error) {
     console.error(error);
-    alert("Failed to save profile");
-    return;
+    return alert("Failed to save profile");
   }
 
-  // Save in localStorage
-  localStorage.setItem(
-    "userProfile",
-    JSON.stringify({ name, email, country })
-  );
-
-  alert("Profile saved successfully!");
-  location.href = "./store.html";
-});
+  location.href = "./store/store.html";
+};
