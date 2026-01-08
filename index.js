@@ -12,65 +12,77 @@ const showRegister = document.getElementById("showRegister");
 const showLogin = document.getElementById("showLogin");
 
 // Toggle forms
-showRegister.onclick = (e) => {
+showRegister.onclick = e => {
   e.preventDefault();
   loginForm.classList.add("hidden");
   registerForm.classList.remove("hidden");
 };
 
-showLogin.onclick = (e) => {
+showLogin.onclick = e => {
   e.preventDefault();
   registerForm.classList.add("hidden");
   loginForm.classList.remove("hidden");
 };
 
-// -------------------- REGISTER --------------------
-registerForm.addEventListener("submit", async (e) => {
+/* =====================
+   REGISTER
+===================== */
+registerForm.addEventListener("submit", async e => {
   e.preventDefault();
 
-  const username = document.getElementById("registerUsername").value.trim();
-  const password = document.getElementById("registerPassword").value.trim();
+  const username = registerForm.registerUsername.value.trim();
+  const password = registerForm.registerPassword.value.trim();
 
-  if (!username || !password) return alert("All fields required");
-
-  // Check username
-  const { data: exists } = await supabase
+  // Check existing user
+  const { data: exists, error: checkErr } = await supabase
     .from("users")
     .select("id")
-    .eq("username", username)
-    .single();
+    .eq("username", username);
 
-  if (exists) return alert("Username already taken");
+  if (checkErr) {
+    alert("Database error");
+    return;
+  }
 
-  // Create user
+  if (exists.length > 0) {
+    alert("Username already exists");
+    return;
+  }
+
+  // Insert new user
   const { data, error } = await supabase
     .from("users")
     .insert({
       username,
       password,
-      profile_completed: false,
+      email: null,
+      country: null
     })
     .select()
     .single();
 
   if (error) {
     console.error(error);
-    return alert("Registration failed");
+    alert("Registration failed");
+    return;
   }
 
-  // Save userId
+  // Save login
   localStorage.setItem("userId", data.id);
+  localStorage.setItem("username", data.username);
 
   // Go to profile setup
   location.href = "./profile-setup.html";
 });
 
-// -------------------- LOGIN --------------------
-loginForm.addEventListener("submit", async (e) => {
+/* =====================
+   LOGIN
+===================== */
+loginForm.addEventListener("submit", async e => {
   e.preventDefault();
 
-  const username = document.getElementById("loginUsername").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
+  const username = loginForm.loginUsername.value.trim();
+  const password = loginForm.loginPassword.value.trim();
 
   // Admin shortcut
   if (username === "admin" && password === "1234") {
@@ -87,14 +99,16 @@ loginForm.addEventListener("submit", async (e) => {
     .single();
 
   if (error || !data) {
-    return alert("Invalid login details");
+    alert("Invalid login");
+    return;
   }
 
-  // Save userId for cart + profile
+  // Save session
   localStorage.setItem("userId", data.id);
+  localStorage.setItem("username", data.username);
 
-  // Redirect based on profile status
-  if (!data.profile_completed) {
+  // If profile incomplete → setup
+  if (!data.email || !data.country) {
     location.href = "./profile-setup.html";
   } else {
     location.href = "./store/store.html";
