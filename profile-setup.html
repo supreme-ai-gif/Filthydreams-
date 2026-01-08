@@ -3,22 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Setup Profile - FilthyDreams</title>
-  <link rel="stylesheet" href="../css/profile-setup.css">
+  <title>Profile Setup - FilthyDreams</title>
+  <link rel="stylesheet" href="./profile-setup.css">
 </head>
 <body>
+  <div class="profile-container">
+    <h1>Complete Your Profile</h1>
+    <form id="profileForm" class="form">
+      <input type="text" id="name" placeholder="Name" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="text" id="country" placeholder="Country" required>
+      <button type="submit" class="btn primary">Save Profile</button>
+    </form>
+  </div>
 
-<div class="profile-container">
-  <h1>Complete Your Profile</h1>
-  <form id="profileForm">
-    <input type="text" id="name" placeholder="Full Name" required>
-    <input type="email" id="email" placeholder="Email" required>
-    <input type="text" id="country" placeholder="Country" required>
-    <button type="submit" class="btn primary">Save Profile</button>
-  </form>
-</div>
-
-<script type="module" src="../js/env.js"></script>
-<script type="module" src="./profile-setup.js"></script>
+  <script type="module" src="./js/env.js"></script>
+  <script type="module" src="./profile-setup.js"></script>
 </body>
 </html>
