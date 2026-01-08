@@ -5,54 +5,64 @@ const supabase = createClient(
   window.__ENV__.SUPABASE_ANON_KEY
 );
 
-const profileForm = document.getElementById("profileForm");
 const avatarInput = document.getElementById("avatarInput");
 const avatarPreview = document.getElementById("avatarPreview");
+const profileForm = document.getElementById("profileForm");
 
-// Get current user ID from localStorage
+let uploadedAvatarUrl = null;
+
+// Preview image on selection
+avatarInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  avatarPreview.src = URL.createObjectURL(file);
+});
+
+// Load current user info if exists
 const userId = localStorage.getItem("userId");
 if (!userId) {
   alert("Not logged in");
-  location.href = "../index.html";
+  location.href = "./index.html";
 }
 
-// Preview avatar
-avatarInput.addEventListener("change", e => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const url = URL.createObjectURL(file);
-  avatarPreview.innerHTML = `<img src="${url}" alt="avatar">`;
-});
-
-// Handle form submission
-profileForm.addEventListener("submit", async e => {
+// Submit profile
+profileForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
   const country = document.getElementById("country").value.trim();
+
+  // Upload avatar if selected
   const file = avatarInput.files[0];
-
-  let avatar_url = null;
-
   if (file) {
     const path = `avatars/${userId}-${Date.now()}-${file.name}`;
-    const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file);
+    const { error: uploadError } = await supabase.storage
+      .from("user-avatars")
+      .upload(path, file, { upsert: true });
+
     if (uploadError) {
       console.error(uploadError);
-      return alert("Failed to upload profile picture");
+      return alert("Failed to upload avatar");
     }
 
-    const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
-    avatar_url = urlData.publicUrl;
+    const { data: { publicUrl } } = supabase.storage
+      .from("user-avatars")
+      .getPublicUrl(path);
+
+    uploadedAvatarUrl = publicUrl;
   }
 
-  const { error } = await supabase.from("users").update({
-    name,
-    email,
-    country,
-    avatar_url
-  }).eq("id", userId);
+  // Update users table
+  const { error } = await supabase
+    .from("users")
+    .update({
+      username: name,
+      email,
+      country,
+      avatar_url: uploadedAvatarUrl
+    })
+    .eq("id", userId);
 
   if (error) {
     console.error(error);
