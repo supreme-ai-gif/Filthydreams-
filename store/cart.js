@@ -5,80 +5,83 @@ const supabase = createClient(
   window.__ENV__.SUPABASE_ANON_KEY
 );
 
-const cartItemsContainer = document.getElementById("cartItems");
+const cartContainer = document.getElementById("cartContainer");
 const cartTotalEl = document.getElementById("cartTotal");
+const backBtn = document.getElementById("backBtn");
+const checkoutBtn = document.getElementById("checkoutBtn");
 
-// --- PROFILE AND LOGOUT BUTTON ---
-document.getElementById("profileBtn").addEventListener("click", () => {
-  location.href = "./profile.html";
-});
+backBtn.addEventListener("click", () => location.href = "./store.html");
+checkoutBtn.addEventListener("click", () => alert("Checkout not implemented yet"));
 
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  localStorage.clear();
-  location.href = "../index.html";
-});
-
-// --- GET USER ID ---
-const userProfile = JSON.parse(localStorage.getItem("userProfile"));
-if (!userProfile) {
+// --- Get current user ---
+const user = supabase.auth.user();
+if (!user) {
   alert("Please login first");
   location.href = "../index.html";
 }
 
-const userId = userProfile.id;
-
-// --- LOAD CART ---
 async function loadCart() {
   const { data, error } = await supabase
     .from("cart")
-    .select("*, products(*)")
-    .eq("user_id", userId);
+    .select(`*, products(*)`)
+    .eq("user_id", user.id);
 
   if (error) {
-    cartItemsContainer.innerHTML = "<p>Error loading cart.</p>";
+    cartContainer.innerHTML = "<p class='error'>Failed to load cart</p>";
     console.error(error);
     return;
   }
 
   if (!data || data.length === 0) {
-    cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
-    cartTotalEl.textContent = "0.00";
+    cartContainer.innerHTML = "<p>Your cart is empty</p>";
+    cartTotalEl.textContent = "0";
     return;
   }
 
-  cartItemsContainer.innerHTML = "";
   let total = 0;
-
+  cartContainer.innerHTML = "";
   data.forEach(item => {
     const product = item.products;
-    total += parseFloat(product.price);
+    total += product.price * item.quantity;
 
     const div = document.createElement("div");
     div.className = "cart-item";
     div.innerHTML = `
       <img src="${product.image_url}" alt="${product.name}">
-      <div class="cart-item-info">
+      <div class="cart-info">
         <h4>${product.name}</h4>
-        <p class="price">$${product.price}</p>
-      </div>
-      <div class="cart-item-actions">
-        <button data-id="${item.id}">Remove</button>
+        <div class="price">$${product.price}</div>
+        <div class="quantity">
+          <label>Qty:</label>
+          <input type="number" min="1" value="${item.quantity}" data-id="${item.id}">
+        </div>
+        <button class="remove-btn" data-id="${item.id}">Remove</button>
       </div>
     `;
-    cartItemsContainer.appendChild(div);
+    cartContainer.appendChild(div);
+  });
 
-    div.querySelector("button").addEventListener("click", async () => {
-      await supabase.from("cart").delete().eq("id", item.id);
+  cartTotalEl.textContent = total.toFixed(2);
+
+  // --- Quantity change ---
+  document.querySelectorAll(".cart-info input").forEach(input => {
+    input.addEventListener("change", async () => {
+      const newQty = parseInt(input.value);
+      const cartId = input.dataset.id;
+      if (newQty < 1) return;
+      await supabase.from("cart").update({ quantity: newQty }).eq("id", cartId);
       loadCart();
     });
   });
 
-  cartTotalEl.textContent = total.toFixed(2);
+  // --- Remove item ---
+  document.querySelectorAll(".remove-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const cartId = btn.dataset.id;
+      await supabase.from("cart").delete().eq("id", cartId);
+      loadCart();
+    });
+  });
 }
 
 loadCart();
-
-// --- CHECKOUT BUTTON ---
-document.getElementById("checkoutBtn").addEventListener("click", () => {
-  alert("Checkout not implemented yet!");
-});
