@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Cart | FilthyDreams</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="../css/main.css">
-<link rel="stylesheet" href="./cart.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart - FilthyDreams</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="./cart.css">
 </head>
 <body>
 
 <header class="store-header">
-  <button onclick="location.href='store.html'">← Continue Shopping</button>
-  <h1>FilthyDreams Cart</h1>
+  <h1 class="store-logo">FilthyDreams</h1>
+  <div class="header-actions">
+    <button id="profileBtn">👤 Profile</button>
+    <button id="logoutBtn">⏻ Logout</button>
+  </div>
 </header>
 
-<main id="cartContainer" class="cart-grid">
-  <p style="padding:40px;text-align:center;">Loading cart...</p>
+<main class="cart-container">
+  <h2>Your Cart</h2>
+  <div id="cartItems" class="cart-items"></div>
+  <div id="cartSummary" class="cart-summary">
+    <p>Total: $<span id="cartTotal">0.00</span></p>
+    <button id="checkoutBtn" class="btn primary">Checkout</button>
+  </div>
 </main>
 
 <script type="module" src="../js/env.js"></script>
