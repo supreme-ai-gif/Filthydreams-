@@ -1,0 +1,66 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: #f6f6f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.profile-container {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.profile-container h1 {
+  margin-bottom: 25px;
+  font-size: 22px;
+  color: orange;
+}
+
+.avatar-section {
+  margin-bottom: 20px;
+}
+
+#avatarPreview {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #ffedd5;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 2px solid orange;
+}
+
+#avatarInput {
+  display: block;
+  margin: 0 auto;
+}
+
+form input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.btn.primary {
+  background: orange;
+  color: white;
+  border: none;
+  padding: 12px 0;
+  width: 100%;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn.primary:hover {
+  background: #ff8c1a;
+}
