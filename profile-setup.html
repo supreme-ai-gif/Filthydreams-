@@ -8,18 +8,17 @@
 </head>
 <body>
 
-  <div class="profile-container">
-    <h1>Complete Your Profile</h1>
-    <p>Please fill in the details to continue to the store</p>
+<div class="profile-container">
+  <h1>Complete Your Profile</h1>
+  <form id="profileForm">
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="text" id="country" placeholder="Country" required>
+    <button type="submit" class="btn primary">Save Profile</button>
+  </form>
+</div>
 
-    <form id="profileForm">
-      <input type="text" id="name" placeholder="Full Name" required>
-      <input type="email" id="email" placeholder="Email Address" required>
-      <input type="text" id="country" placeholder="Country" required>
-      <button type="submit" class="btn primary">Save Profile</button>
-    </form>
-  </div>
-
-  <script type="module" src="./profile-setup.js"></script>
+<script type="module" src="../js/env.js"></script>
+<script type="module" src="./profile-setup.js"></script>
 </body>
 </html>
