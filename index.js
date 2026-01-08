@@ -4,51 +4,35 @@ const SUPABASE_URL = window.__ENV__.SUPABASE_URL;
 const SUPABASE_ANON_KEY = window.__ENV__.SUPABASE_ANON_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Elements
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
 const showRegister = document.getElementById("showRegister");
 const showLogin = document.getElementById("showLogin");
 
 // Toggle forms
-showRegister.onclick = e => {
-  e.preventDefault();
-  loginForm.classList.add("hidden");
-  registerForm.classList.remove("hidden");
-};
-showLogin.onclick = e => {
-  e.preventDefault();
-  registerForm.classList.add("hidden");
-  loginForm.classList.remove("hidden");
-};
+showRegister.onclick = e => { e.preventDefault(); loginForm.classList.add("hidden"); registerForm.classList.remove("hidden"); };
+showLogin.onclick = e => { e.preventDefault(); registerForm.classList.add("hidden"); loginForm.classList.remove("hidden"); };
 
-/* =====================
-   REGISTER
-===================== */
+// --- REGISTER ---
 registerForm.addEventListener("submit", async e => {
   e.preventDefault();
   const username = registerForm.registerUsername.value.trim();
   const password = registerForm.registerPassword.value.trim();
 
-  // Check existing user
-  const { data: exists, error: checkErr } = await supabase
-    .from("users")
-    .select("id")
-    .eq("username", username);
-
-  if (checkErr) { alert("Database error"); return; }
-  if (exists.length > 0) { alert("Username already exists"); return; }
+  // Check if username exists
+  const { data: exists } = await supabase.from("users").select("id").eq("username", username);
+  if (exists.length) return alert("Username already taken");
 
   // Insert new user
-  const { data, error } = await supabase
-    .from("users")
-    .insert({ username, password, email: null, country: null })
-    .select()
-    .single();
+  const { data, error } = await supabase.from("users").insert({
+    username,
+    password,
+    email: null,
+    country: null
+  }).select().single();
 
-  if (error) { console.error(error); alert("Registration failed"); return; }
+  if (error) return alert("Registration failed");
 
-  // Save session
   localStorage.setItem("userId", data.id);
   localStorage.setItem("username", data.username);
 
@@ -56,9 +40,7 @@ registerForm.addEventListener("submit", async e => {
   location.href = "./profile-setup.html";
 });
 
-/* =====================
-   LOGIN
-===================== */
+// --- LOGIN ---
 loginForm.addEventListener("submit", async e => {
   e.preventDefault();
   const username = loginForm.loginUsername.value.trim();
@@ -71,20 +53,18 @@ loginForm.addEventListener("submit", async e => {
     return;
   }
 
-  const { data, error } = await supabase
-    .from("users")
+  const { data, error } = await supabase.from("users")
     .select("*")
     .eq("username", username)
     .eq("password", password)
     .single();
 
-  if (error || !data) { alert("Invalid login"); return; }
+  if (error || !data) return alert("Invalid login");
 
-  // Save session
   localStorage.setItem("userId", data.id);
   localStorage.setItem("username", data.username);
 
-  // Check profile
+  // Redirect based on profile completeness
   if (!data.email || !data.country) {
     location.href = "./profile-setup.html";
   } else {
