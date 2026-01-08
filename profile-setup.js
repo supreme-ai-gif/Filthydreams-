@@ -1,26 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Setup Profile - FilthyDreams</title>
-  <link rel="stylesheet" href="../css/profile-setup.css">
-</head>
-<body>
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-<div class="setup-container">
-  <h1>Complete Your Profile</h1>
-  <p>Fill in your details to continue</p>
+const supabase = createClient(
+  window.__ENV__.SUPABASE_URL,
+  window.__ENV__.SUPABASE_ANON_KEY
+);
 
-  <form id="profileForm" class="form">
-    <input type="text" id="name" placeholder="Full Name" required>
-    <input type="email" id="email" placeholder="Email Address" required>
-    <input type="text" id="country" placeholder="Country" required>
-    <button type="submit" class="btn primary">Save Profile</button>
-  </form>
-</div>
+// Elements
+const profileForm = document.getElementById("profileForm");
 
-<script type="module" src="../js/env.js"></script>
-<script type="module" src="./profile-setup.js"></script>
-</body>
-</html>
+profileForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const country = document.getElementById("country").value.trim();
+
+  if (!name || !email || !country) {
+    return alert("Please fill all fields");
+  }
+
+  const userId = localStorage.getItem("userId");
+  if (!userId) {
+    alert("Not logged in");
+    location.href = "../index.html";
+    return;
+  }
+
+  const { error } = await supabase
+    .from("users")
+    .update({ name, email, country })
+    .eq("id", userId);
+
+  if (error) {
+    console.error(error);
+    alert("Failed to save profile");
+    return;
+  }
+
+  // Save in localStorage
+  localStorage.setItem(
+    "userProfile",
+    JSON.stringify({ name, email, country })
+  );
+
+  alert("Profile saved successfully!");
+  location.href = "./store.html";
+});
