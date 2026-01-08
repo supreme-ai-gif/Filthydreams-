@@ -1,28 +1,36 @@
-const form = document.getElementById("profileForm");
+// Elements
+const profileForm = document.getElementById("profileForm");
+const usernameInput = document.getElementById("username");
+const emailInput = document.getElementById("email");
+const countryInput = document.getElementById("country");
 
-form.addEventListener("submit", e => {
+// Prefill if localStorage already has data
+const savedProfile = JSON.parse(localStorage.getItem("userProfile"));
+if (savedProfile) {
+  if (savedProfile.username) usernameInput.value = savedProfile.username;
+  if (savedProfile.email) emailInput.value = savedProfile.email;
+  if (savedProfile.country) countryInput.value = savedProfile.country;
+}
+
+// On submit
+profileForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const name = document.getElementById("fullName").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const country = document.getElementById("country").value.trim();
+  const profileData = {
+    username: usernameInput.value.trim(),
+    email: emailInput.value.trim(),
+    country: countryInput.value.trim(),
+  };
 
-  if (!name || !email || !country) return alert("All fields are required");
+  if (!profileData.username || !profileData.email || !profileData.country) {
+    return alert("Please fill all fields!");
+  }
 
-  // Save profile to a local file (simulate profile.txt)
-  const content = `Name: ${name}\nEmail: ${email}\nCountry: ${country}`;
-  const blob = new Blob([content], { type: "text/plain" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "profile.txt";
-  a.click();
-  URL.revokeObjectURL(a.href);
+  // Save to localStorage
+  localStorage.setItem("userProfile", JSON.stringify(profileData));
 
-  // Save info in localStorage
-  localStorage.setItem("profileName", name);
-  localStorage.setItem("profileEmail", email);
-  localStorage.setItem("profileCountry", country);
+  alert("Profile saved successfully!");
 
-  alert("Profile saved!");
+  // Redirect to store
   location.href = "./store/store.html";
 });
