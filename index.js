@@ -4,7 +4,7 @@ const SUPABASE_URL = window.__ENV__.SUPABASE_URL;
 const SUPABASE_ANON_KEY = window.__ENV__.SUPABASE_ANON_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Forms
+// Elements
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
 const showRegister = document.getElementById("showRegister");
@@ -16,28 +16,28 @@ showRegister.onclick = e => {
   loginForm.classList.add("hidden");
   registerForm.classList.remove("hidden");
 };
-
 showLogin.onclick = e => {
   e.preventDefault();
   registerForm.classList.add("hidden");
   loginForm.classList.remove("hidden");
 };
 
-// ------------------ REGISTER ------------------
+/* =====================
+   REGISTER
+===================== */
 registerForm.addEventListener("submit", async e => {
   e.preventDefault();
-
   const username = registerForm.registerUsername.value.trim();
   const password = registerForm.registerPassword.value.trim();
 
-  // Check if username exists
+  // Check existing user
   const { data: exists, error: checkErr } = await supabase
     .from("users")
     .select("id")
     .eq("username", username);
 
-  if (checkErr) return alert("Database error");
-  if (exists.length > 0) return alert("Username already exists");
+  if (checkErr) { alert("Database error"); return; }
+  if (exists.length > 0) { alert("Username already exists"); return; }
 
   // Insert new user
   const { data, error } = await supabase
@@ -46,12 +46,9 @@ registerForm.addEventListener("submit", async e => {
     .select()
     .single();
 
-  if (error) {
-    console.error(error);
-    return alert("Registration failed");
-  }
+  if (error) { console.error(error); alert("Registration failed"); return; }
 
-  // Save user locally
+  // Save session
   localStorage.setItem("userId", data.id);
   localStorage.setItem("username", data.username);
 
@@ -59,10 +56,11 @@ registerForm.addEventListener("submit", async e => {
   location.href = "./profile-setup.html";
 });
 
-// ------------------ LOGIN ------------------
+/* =====================
+   LOGIN
+===================== */
 loginForm.addEventListener("submit", async e => {
   e.preventDefault();
-
   const username = loginForm.loginUsername.value.trim();
   const password = loginForm.loginPassword.value.trim();
 
@@ -80,13 +78,13 @@ loginForm.addEventListener("submit", async e => {
     .eq("password", password)
     .single();
 
-  if (error || !data) return alert("Invalid login");
+  if (error || !data) { alert("Invalid login"); return; }
 
   // Save session
   localStorage.setItem("userId", data.id);
   localStorage.setItem("username", data.username);
 
-  // If profile incomplete → setup
+  // Check profile
   if (!data.email || !data.country) {
     location.href = "./profile-setup.html";
   } else {
