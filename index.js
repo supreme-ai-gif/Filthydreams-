@@ -23,68 +23,23 @@ showLogin.addEventListener("click", (e) => {
   loginForm.classList.remove("hidden");
 });
 
-// --- AUTO REDIRECT IF LOGGED IN ---
-window.addEventListener("DOMContentLoaded", async () => {
-  const loggedUser = localStorage.getItem("userId");
-  const isAdmin = localStorage.getItem("isAdmin");
-
-  if (isAdmin === "true") {
-    location.href = "./admin/admin.html";
-    return;
-  }
-
-  if (loggedUser) {
-    // Fetch user to check profile completion
-    const { data, error } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", loggedUser)
-      .single();
-    if (data) {
-      if (!data.email || !data.avatar_url) {
-        location.href = "./profile-setup.html";
-      } else {
-        localStorage.setItem("userProfile", JSON.stringify({
-          name: data.username,
-          email: data.email,
-          avatar: data.avatar_url
-        }));
-        location.href = "./store/store.html";
-      }
-    } else {
-      localStorage.removeItem("userId");
-    }
-  }
-});
-
 // --- REGISTER LOGIC ---
 registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const username = document.getElementById("registerUsername").value.trim();
   const password = document.getElementById("registerPassword").value.trim();
 
-  if (!username || !password) return alert("Enter all fields");
-
-  // Check if username exists
-  const { data: existing } = await supabase
-    .from("users")
-    .select("*")
-    .eq("username", username);
-
+  // Check username exists
+  const { data: existing } = await supabase.from("users").select("*").eq("username", username);
   if (existing.length) return alert("Username already taken");
 
-  const { data, error } = await supabase
-    .from("users")
-    .insert({ username, password, role: "user" })
-    .select()
-    .single();
+  const { data, error } = await supabase.from("users").insert({ username, password, role: "user" }).select().single();
+  if (error) return alert("Error registering");
 
-  if (error || !data) return alert("Error registering");
-
-  alert("Registered successfully! Please setup your profile.");
-  // Save userId for profile setup
-  localStorage.setItem("userId", data.id);
-  location.href = "./profile-setup.html";
+  alert("Registered successfully! Please login.");
+  registerForm.reset();
+  registerForm.classList.add("hidden");
+  loginForm.classList.remove("hidden");
 });
 
 // --- LOGIN LOGIC ---
@@ -92,8 +47,6 @@ loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const username = document.getElementById("loginUsername").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
-
-  if (!username || !password) return alert("Enter all fields");
 
   // ADMIN CHECK
   if (username === "admin" && password === "1234") {
@@ -110,22 +63,26 @@ loginForm.addEventListener("submit", async (e) => {
     .eq("password", password)
     .single();
 
-  if (error || !data) return alert("Invalid credentials");
+  if (error) return alert("Error logging in");
+  if (!data) return alert("Invalid credentials");
 
   const user = data;
 
-  // Check profile completion
-  if (!user.email || !user.avatar_url) {
-    localStorage.setItem("userId", user.id);
-    location.href = "./profile-setup.html";
+  // Save user profile in localStorage
+  localStorage.setItem("userProfile", JSON.stringify({
+    id: user.id,
+    name: user.name || "",
+    email: user.email || "",
+    country: user.country || "",
+    avatar: user.avatar_url || ""
+  }));
+
+  // Redirect logic:
+  // If name or email missing → profile-setup.html
+  // Otherwise → store.html
+  if (!user.name || !user.email) {
+    location.href = "./profile-setup/profile-setup.html";
   } else {
-    // Save user profile
-    localStorage.setItem("userId", user.id);
-    localStorage.setItem("userProfile", JSON.stringify({
-      name: user.username,
-      email: user.email,
-      avatar: user.avatar_url
-    }));
     location.href = "./store/store.html";
   }
 });
