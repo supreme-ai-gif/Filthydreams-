@@ -5,75 +5,80 @@ const supabase = createClient(
   window.__ENV__.SUPABASE_ANON_KEY
 );
 
-const userId = localStorage.getItem("userId"); // must be set on login
-const container = document.getElementById("cartContainer");
+const cartItemsContainer = document.getElementById("cartItems");
+const cartTotalEl = document.getElementById("cartTotal");
 
-if (!userId) {
-  container.innerHTML = "<p>Please login first.</p>";
-  throw new Error("No user ID in localStorage");
+// --- PROFILE AND LOGOUT BUTTON ---
+document.getElementById("profileBtn").addEventListener("click", () => {
+  location.href = "./profile.html";
+});
+
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  localStorage.clear();
+  location.href = "../index.html";
+});
+
+// --- GET USER ID ---
+const userProfile = JSON.parse(localStorage.getItem("userProfile"));
+if (!userProfile) {
+  alert("Please login first");
+  location.href = "../index.html";
 }
 
+const userId = userProfile.id;
+
+// --- LOAD CART ---
 async function loadCart() {
   const { data, error } = await supabase
     .from("cart")
-    .select(`
-      id,
-      quantity,
-      product_id,
-      products(*)   -- join to get product info
-    `)
+    .select("*, products(*)")
     .eq("user_id", userId);
 
   if (error) {
+    cartItemsContainer.innerHTML = "<p>Error loading cart.</p>";
     console.error(error);
-    container.innerHTML = "<p>Error loading cart.</p>";
     return;
   }
 
   if (!data || data.length === 0) {
-    container.innerHTML = "<p>Your cart is empty.</p>";
+    cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
+    cartTotalEl.textContent = "0.00";
     return;
   }
 
-  container.innerHTML = "";
+  cartItemsContainer.innerHTML = "";
+  let total = 0;
+
   data.forEach(item => {
-    const p = item.products;
-    const card = document.createElement("div");
-    card.className = "cart-item";
-    card.innerHTML = `
-      <img src="${p.image_url}" alt="${p.name}">
-      <div class="info">
-        <h4>${p.name}</h4>
-        <span>$${p.price} x ${item.quantity}</span>
+    const product = item.products;
+    total += parseFloat(product.price);
+
+    const div = document.createElement("div");
+    div.className = "cart-item";
+    div.innerHTML = `
+      <img src="${product.image_url}" alt="${product.name}">
+      <div class="cart-item-info">
+        <h4>${product.name}</h4>
+        <p class="price">$${product.price}</p>
       </div>
-      <div class="actions">
-        <button class="add">+</button>
-        <button class="remove">-</button>
-        <button class="delete">Remove</button>
-        <button class="buy" onclick="window.open('${p.buy_link}','_blank')">Buy</button>
+      <div class="cart-item-actions">
+        <button data-id="${item.id}">Remove</button>
       </div>
     `;
+    cartItemsContainer.appendChild(div);
 
-    // Quantity + / -
-    card.querySelector(".add").addEventListener("click", async () => {
-      await supabase.from("cart").update({ quantity: item.quantity + 1 }).eq("id", item.id);
-      loadCart();
-    });
-    card.querySelector(".remove").addEventListener("click", async () => {
-      if (item.quantity <= 1) return;
-      await supabase.from("cart").update({ quantity: item.quantity - 1 }).eq("id", item.id);
-      loadCart();
-    });
-
-    // Delete
-    card.querySelector(".delete").addEventListener("click", async () => {
-      if (!confirm("Remove this item from cart?")) return;
+    div.querySelector("button").addEventListener("click", async () => {
       await supabase.from("cart").delete().eq("id", item.id);
       loadCart();
     });
-
-    container.appendChild(card);
   });
+
+  cartTotalEl.textContent = total.toFixed(2);
 }
 
 loadCart();
+
+// --- CHECKOUT BUTTON ---
+document.getElementById("checkoutBtn").addEventListener("click", () => {
+  alert("Checkout not implemented yet!");
+});
