@@ -1,37 +1,28 @@
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+const form = document.getElementById("profileForm");
 
-const supabase = createClient(window.__ENV__.SUPABASE_URL, window.__ENV__.SUPABASE_ANON_KEY);
-
-const profileForm = document.getElementById("profileForm");
-const userId = localStorage.getItem("userId");
-
-if (!userId) {
-  alert("Not logged in");
-  location.href = "./index.html";
-}
-
-profileForm.addEventListener("submit", async e => {
+form.addEventListener("submit", e => {
   e.preventDefault();
 
-  const name = document.getElementById("name").value.trim();
+  const name = document.getElementById("fullName").value.trim();
   const email = document.getElementById("email").value.trim();
   const country = document.getElementById("country").value.trim();
 
-  if (!name || !email || !country) {
-    return alert("All fields are required");
-  }
+  if (!name || !email || !country) return alert("All fields are required");
 
-  const { error } = await supabase
-    .from("users")
-    .update({ username: name, email, country })
-    .eq("id", userId);
+  // Save profile to a local file (simulate profile.txt)
+  const content = `Name: ${name}\nEmail: ${email}\nCountry: ${country}`;
+  const blob = new Blob([content], { type: "text/plain" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "profile.txt";
+  a.click();
+  URL.revokeObjectURL(a.href);
 
-  if (error) {
-    console.error(error);
-    alert("Failed to save profile");
-    return;
-  }
+  // Save info in localStorage
+  localStorage.setItem("profileName", name);
+  localStorage.setItem("profileEmail", email);
+  localStorage.setItem("profileCountry", country);
 
-  alert("Profile saved successfully!");
+  alert("Profile saved!");
   location.href = "./store/store.html";
 });
