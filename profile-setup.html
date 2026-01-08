@@ -2,33 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Complete Your Profile - FilthyDreams</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="stylesheet" href="../css/profile-setup.css">
+  <title>Profile Setup - FilthyDreams</title>
+  <link rel="stylesheet" href="./profile-setup.css">
 </head>
 <body>
+  <div class="profile-container">
+    <h1 class="logo">FilthyDreams</h1>
+    <h2>Complete Your Profile</h2>
 
-<div class="profile-container">
-  <h1 class="logo">
-    <span class="letter-f">F</span><span class="rest-name">ilthyDreams</span>
-  </h1>
-  <p class="subtitle">Complete your profile to start shopping!</p>
+    <form id="profileForm" class="profile-form">
+      <div class="avatar-section">
+        <div id="avatarPreview" class="avatar-preview">Click to select</div>
+        <input type="file" id="avatarInput" accept="image/*" hidden>
+      </div>
 
-  <form id="profileForm" class="profile-form">
-    <div class="avatar-preview" id="avatarPreview">
-      <span>+</span>
-    </div>
-    <input type="file" id="avatarInput" accept="image/*" hidden>
+      <input type="text" id="name" placeholder="Full Name" required>
+      <input type="email" id="email" placeholder="Email Address" required>
+      <input type="text" id="country" placeholder="Country" required>
 
-    <input type="text" id="name" placeholder="Full Name" required>
-    <input type="text" id="country" placeholder="Country" required>
-    <input type="email" id="email" placeholder="Email" required>
-    <button type="submit" class="btn primary">Save Profile</button>
-  </form>
-</div>
+      <button type="submit" class="btn primary">Save Profile</button>
+    </form>
+  </div>
 
-<script type="module" src="../js/env.js"></script>
-<script type="module" src="./profile-setup.js"></script>
+  <script type="module" src="../js/env.js"></script>
+  <script type="module" src="./profile-setup.js"></script>
 </body>
 </html>
