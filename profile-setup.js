@@ -5,7 +5,6 @@ const supabase = createClient(
   window.__ENV__.SUPABASE_ANON_KEY
 );
 
-// 🔒 LOGIN CHECK (CORRECT WAY)
 const userId = localStorage.getItem("userId");
 
 if (!userId) {
@@ -13,7 +12,6 @@ if (!userId) {
   location.href = "./index.html";
 }
 
-// FORM
 const form = document.getElementById("profileForm");
 
 form.addEventListener("submit", async e => {
@@ -22,18 +20,44 @@ form.addEventListener("submit", async e => {
   const name = document.getElementById("name").value.trim();
   const email = document.getElementById("email").value.trim();
   const country = document.getElementById("country").value.trim();
+  const avatarFile = document.getElementById("avatar").files[0];
 
   if (!name || !email || !country) {
-    alert("Fill all fields");
+    alert("Fill all required fields");
     return;
   }
 
+  let avatarUrl = null;
+
+  // 📸 UPLOAD AVATAR IF EXISTS
+  if (avatarFile) {
+    const path = `avatars/${userId}-${Date.now()}`;
+
+    const { error: uploadError } = await supabase
+      .storage
+      .from("avatars")
+      .upload(path, avatarFile);
+
+    if (uploadError) {
+      console.error(uploadError);
+      alert("Failed to upload profile picture");
+      return;
+    }
+
+    avatarUrl = supabase
+      .storage
+      .from("avatars")
+      .getPublicUrl(path).data.publicUrl;
+  }
+
+  // 💾 SAVE PROFILE
   const { error } = await supabase
     .from("users")
     .update({
       name,
       email,
-      country
+      country,
+      avatar_url: avatarUrl
     })
     .eq("id", userId);
 
@@ -43,6 +67,5 @@ form.addEventListener("submit", async e => {
     return;
   }
 
-  // ✅ SUCCESS
   location.href = "./store/store.html";
 });
