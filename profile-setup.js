@@ -5,27 +5,41 @@ const supabase = createClient(
   window.__ENV__.SUPABASE_ANON_KEY
 );
 
+const userId = localStorage.getItem("userId");
+
+if (!userId) {
+  alert("Not logged in");
+  location.href = "./index.html";
+}
+
 const form = document.getElementById("profileForm");
 
-form.onsubmit = async e => {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const userId = localStorage.getItem("userId");
-  if (!userId) return location.href = "./index.html";
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const country = document.getElementById("country").value.trim();
 
-  const name = nameInput.value.trim();
-  const email = emailInput.value.trim();
-  const country = countryInput.value.trim();
+  if (!name || !email || !country) {
+    alert("Please fill all fields");
+    return;
+  }
 
   const { error } = await supabase
     .from("users")
-    .update({ name, email, country })
+    .update({
+      name,
+      email,
+      country
+    })
     .eq("id", userId);
 
   if (error) {
     console.error(error);
-    return alert("Failed to save profile");
+    alert("Failed to save profile");
+    return;
   }
 
   location.href = "./store/store.html";
-};
+});
