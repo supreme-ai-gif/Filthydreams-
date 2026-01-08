@@ -1,16 +1,16 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-const supabase = createClient(
-  window.__ENV__.SUPABASE_URL,
-  window.__ENV__.SUPABASE_ANON_KEY
-);
+const SUPABASE_URL = window.__ENV__.SUPABASE_URL;
+const SUPABASE_ANON_KEY = window.__ENV__.SUPABASE_ANON_KEY;
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Forms
 const loginForm = document.getElementById("loginForm");
 const registerForm = document.getElementById("registerForm");
 const showRegister = document.getElementById("showRegister");
 const showLogin = document.getElementById("showLogin");
 
-/* TOGGLE */
+// Toggle forms
 showRegister.onclick = e => {
   e.preventDefault();
   loginForm.classList.add("hidden");
@@ -23,23 +23,26 @@ showLogin.onclick = e => {
   loginForm.classList.remove("hidden");
 };
 
-/* REGISTER */
-registerForm.onsubmit = async e => {
+// ------------------ REGISTER ------------------
+registerForm.addEventListener("submit", async e => {
   e.preventDefault();
 
   const username = registerForm.registerUsername.value.trim();
   const password = registerForm.registerPassword.value.trim();
 
-  const { data: exists } = await supabase
+  // Check if username exists
+  const { data: exists, error: checkErr } = await supabase
     .from("users")
     .select("id")
     .eq("username", username);
 
-  if (exists.length) return alert("Username already exists");
+  if (checkErr) return alert("Database error");
+  if (exists.length > 0) return alert("Username already exists");
 
+  // Insert new user
   const { data, error } = await supabase
     .from("users")
-    .insert({ username, password })
+    .insert({ username, password, email: null, country: null })
     .select()
     .single();
 
@@ -48,19 +51,24 @@ registerForm.onsubmit = async e => {
     return alert("Registration failed");
   }
 
+  // Save user locally
   localStorage.setItem("userId", data.id);
-  location.href = "./profile-setup.html";
-};
+  localStorage.setItem("username", data.username);
 
-/* LOGIN */
-loginForm.onsubmit = async e => {
+  // Go to profile setup
+  location.href = "./profile-setup.html";
+});
+
+// ------------------ LOGIN ------------------
+loginForm.addEventListener("submit", async e => {
   e.preventDefault();
 
   const username = loginForm.loginUsername.value.trim();
   const password = loginForm.loginPassword.value.trim();
 
-  // Admin
+  // Admin shortcut
   if (username === "admin" && password === "1234") {
+    localStorage.setItem("isAdmin", "true");
     location.href = "./admin/admin.html";
     return;
   }
@@ -74,11 +82,14 @@ loginForm.onsubmit = async e => {
 
   if (error || !data) return alert("Invalid login");
 
+  // Save session
   localStorage.setItem("userId", data.id);
+  localStorage.setItem("username", data.username);
 
-  if (!data.name || !data.email || !data.country) {
+  // If profile incomplete → setup
+  if (!data.email || !data.country) {
     location.href = "./profile-setup.html";
   } else {
     location.href = "./store/store.html";
   }
-};
+});
