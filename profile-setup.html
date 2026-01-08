@@ -1,27 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Complete Profile</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./css/profile-setup.css">
+  <meta charset="UTF-8" />
+  <title>Complete Your Profile • FilthyDreams</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="./css/profile-setup.css" />
 </head>
 <body>
 
-<div class="profile-container">
-  <h1>Complete Your Profile</h1>
-  <p>Just one more step 🚀</p>
+  <div class="profile-container">
 
-  <form id="profileForm">
-    <input id="name" placeholder="Full name" required />
-    <input id="email" type="email" placeholder="Email address" required />
-    <input id="country" placeholder="Country" required />
+    <!-- LOGO -->
+    <h1 class="logo">
+      <span class="f">F</span>ilthyDreams
+    </h1>
 
-    <button class="btn">Save Profile</button>
-  </form>
-</div>
+    <!-- CARD -->
+    <div class="card">
+      <h2>Complete your profile</h2>
+      <p class="subtitle">This helps personalize your experience</p>
 
-<script type="module" src="./js/env.js"></script>
-<script type="module" src="./profile-setup.js"></script>
+      <form id="profileForm">
+
+        <!-- AVATAR -->
+        <div class="avatar-box">
+          <label for="avatar" class="avatar-label">
+            <img id="avatarPreview" src="./assets/avatar-placeholder.png" />
+            <span>Upload Photo</span>
+          </label>
+          <input type="file" id="avatar" accept="image/*" hidden />
+        </div>
+
+        <input id="name" placeholder="Full Name" required />
+        <input id="email" type="email" placeholder="Email Address" required />
+        <input id="country" placeholder="Country" required />
+
+        <button type="submit" class="btn">Save & Continue</button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- ENV + JS -->
+  <script type="module" src="./js/env.js"></script>
+  <script type="module" src="./profile-setup.js"></script>
+
+  <!-- IMAGE PREVIEW -->
+  <script>
+    const input = document.getElementById("avatar");
+    const preview = document.getElementById("avatarPreview");
+
+    input.addEventListener("change", () => {
+      const file = input.files[0];
+      if (file) preview.src = URL.createObjectURL(file);
+    });
+  </script>
+
 </body>
 </html>
