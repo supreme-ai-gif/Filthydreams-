@@ -1,42 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FilthyDreams | Login</title>
-  <link rel="stylesheet" href="./css/main.css" />
+  <meta charset="UTF-8">
+  <title>FilthyDreams</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/main.css">
 </head>
 <body>
 
-  <div class="auth-container">
-    <h1 class="logo">
-      <span class="letter-f">F</span>ilthyDreams
-    </h1>
+<div class="auth-container">
+  <h1 class="logo">
+    <span class="letter-f">F</span>ilthyDreams
+  </h1>
 
-    <!-- LOGIN -->
-    <form id="loginForm" class="form">
-      <input type="text" id="loginUsername" placeholder="Username" required />
-      <input type="password" id="loginPassword" placeholder="Password" required />
-      <button class="btn primary" type="submit">Login</button>
-      <p class="switch">
-        Don’t have an account?
-        <a href="#" id="showRegister">Register</a>
-      </p>
-    </form>
+  <!-- LOGIN -->
+  <form id="loginForm" class="form">
+    <input id="loginUsername" placeholder="Username" required />
+    <input id="loginPassword" type="password" placeholder="Password" required />
+    <button class="btn primary">Login</button>
+    <p class="switch">
+      Don’t have an account?
+      <a href="#" id="showRegister">Register</a>
+    </p>
+  </form>
 
-    <!-- REGISTER -->
-    <form id="registerForm" class="form hidden">
-      <input type="text" id="registerUsername" placeholder="Username" required />
-      <input type="password" id="registerPassword" placeholder="Password" required />
-      <button class="btn primary" type="submit">Register</button>
-      <p class="switch">
-        Already have an account?
-        <a href="#" id="showLogin">Login</a>
-      </p>
-    </form>
-  </div>
+  <!-- REGISTER -->
+  <form id="registerForm" class="form hidden">
+    <input id="registerUsername" placeholder="Username" required />
+    <input id="registerPassword" type="password" placeholder="Password" required />
+    <button class="btn primary">Create Account</button>
+    <p class="switch">
+      Already have an account?
+      <a href="#" id="showLogin">Login</a>
+    </p>
+  </form>
+</div>
 
-  <script type="module" src="./js/env.js"></script>
-  <script type="module" src="./index.js"></script>
+<script type="module" src="./js/env.js"></script>
+<script type="module" src="./index.js"></script>
 </body>
 </html>
