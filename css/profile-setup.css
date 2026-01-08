@@ -1,94 +1,50 @@
-/* =========================
-   RESET / BASE
-========================= */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: "Segoe UI", system-ui, sans-serif;
-}
+* { box-sizing: border-box; margin:0; padding:0; font-family:"Segoe UI",system-ui,sans-serif; }
 
 body {
   background: #f6f6f6;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
 }
 
-/* =========================
-   PROFILE CONTAINER
-========================= */
 .profile-container {
-  background: white;
-  padding: 40px 30px;
-  border-radius: 16px;
-  box-shadow: 0 12px 35px rgba(0,0,0,0.12);
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
+  background:white;
+  padding:40px 30px;
+  border-radius:16px;
+  box-shadow:0 12px 35px rgba(0,0,0,0.12);
+  max-width:400px;
+  width:100%;
+  text-align:center;
 }
 
-.profile-container h1 {
-  color: orange;
-  margin-bottom: 10px;
-  font-size: 28px;
-}
+.profile-container h1 { color: orange; margin-bottom:10px; font-size:28px; }
+.profile-container p { color:#555; font-size:14px; margin-bottom:30px; }
 
-.profile-container p {
-  color: #555;
-  font-size: 14px;
-  margin-bottom: 30px;
+form { display:flex; flex-direction:column; gap:20px; }
+input[type="text"], input[type="email"] {
+  padding:14px 16px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  outline:none;
+  font-size:16px;
+  transition:border-color 0.2s;
 }
+input:focus { border-color: orange; }
 
-/* =========================
-   FORM
-========================= */
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-input[type="text"],
-input[type="email"] {
-  padding: 14px 16px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  outline: none;
-  font-size: 16px;
-  transition: border-color 0.2s;
-}
-
-input:focus {
-  border-color: orange;
-}
-
-/* =========================
-   BUTTON
-========================= */
 .btn.primary {
-  background: orange;
-  color: white;
-  border: none;
-  padding: 14px;
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
+  background:orange;
+  color:white;
+  border:none;
+  padding:14px;
+  border-radius:10px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
   transition: background 0.2s, transform 0.2s;
 }
+.btn.primary:hover { background:#ff7a00; transform:translateY(-2px); }
 
-.btn.primary:hover {
-  background: #ff7a00;
-  transform: translateY(-2px);
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-@media (max-width: 480px) {
-  .profile-container {
-    padding: 30px 20px;
-  }
+@media(max-width:480px){
+  .profile-container { padding:30px 20px; }
 }
