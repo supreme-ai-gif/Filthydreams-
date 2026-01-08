@@ -50,28 +50,29 @@ async function loadProduct() {
   // ===== CONNECT "ADD TO CART" =====
   const addBtn = container.querySelector(".buy-btn");
   addBtn.addEventListener("click", async () => {
-    // Get logged-in user info
-    const userProfile = JSON.parse(localStorage.getItem("userProfile"));
-    if (!userProfile || !userProfile.id) return alert("Please login first");
+    const userId = localStorage.getItem("userId"); // must be set on login/profile-setup
+    if (!userId) return alert("Please login first");
 
-    // Add product to cart
-    const { error: cartError } = await supabase
-      .from("cart")
-      .upsert(
-        {
-          user_id: userProfile.id,
-          product_id: data.id,
-          quantity: 1,
-        },
-        { onConflict: ["user_id", "product_id"] } // prevent duplicates
-      );
+    try {
+      // Add or update cart
+      const { error: upsertError } = await supabase
+        .from("cart")
+        .upsert(
+          {
+            user_id: userId,
+            product_id: data.id,
+            quantity: 1,
+          },
+          { onConflict: ["user_id", "product_id"] }
+        );
 
-    if (cartError) {
-      console.error(cartError);
-      return alert("Failed to add to cart");
+      if (upsertError) throw upsertError;
+
+      alert("Added to cart!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to add to cart");
     }
-
-    alert("Added to cart!");
   });
 }
 
