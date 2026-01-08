@@ -1,38 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>FilthyDreams</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./css/main.css">
 </head>
 <body>
 
 <div class="auth-container">
-  <h1 class="logo">
-    <span class="letter-f">F</span>ilthyDreams
-  </h1>
+  <h1 class="logo">FilthyDreams</h1>
 
   <!-- LOGIN -->
   <form id="loginForm" class="form">
     <input id="loginUsername" placeholder="Username" required />
     <input id="loginPassword" type="password" placeholder="Password" required />
-    <button class="btn primary">Login</button>
-    <p class="switch">
-      Don’t have an account?
-      <a href="#" id="showRegister">Register</a>
-    </p>
+    <button class="btn">Login</button>
+    <p class="switch">No account? <a id="showRegister">Register</a></p>
   </form>
 
   <!-- REGISTER -->
   <form id="registerForm" class="form hidden">
     <input id="registerUsername" placeholder="Username" required />
     <input id="registerPassword" type="password" placeholder="Password" required />
-    <button class="btn primary">Create Account</button>
-    <p class="switch">
-      Already have an account?
-      <a href="#" id="showLogin">Login</a>
-    </p>
+    <button class="btn">Register</button>
+    <p class="switch">Have account? <a id="showLogin">Login</a></p>
   </form>
 </div>
 
