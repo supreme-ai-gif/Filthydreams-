@@ -1,45 +1,68 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
+// Supabase client
 const supabase = createClient(
   window.__ENV__.SUPABASE_URL,
   window.__ENV__.SUPABASE_ANON_KEY
 );
 
-const userId = localStorage.getItem("userId");
+// Elements
+const profileForm = document.getElementById("profileForm");
+const nameInput = document.getElementById("name");
+const emailInput = document.getElementById("email");
+const countryInput = document.getElementById("country");
 
+// Get user ID from localStorage (set during registration or login)
+const userId = localStorage.getItem("userId");
 if (!userId) {
   alert("Not logged in");
   location.href = "./index.html";
 }
 
-const form = document.getElementById("profileForm");
+// Load existing profile if any
+async function loadProfile() {
+  const { data, error } = await supabase
+    .from("users")
+    .select("name, email, country")
+    .eq("id", userId)
+    .single();
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const country = document.getElementById("country").value.trim();
-
-  if (!name || !email || !country) {
-    alert("Please fill all fields");
+  if (error) {
+    console.error(error);
     return;
   }
 
-  const { error } = await supabase
+  if (data) {
+    nameInput.value = data.name || "";
+    emailInput.value = data.email || "";
+    countryInput.value = data.country || "";
+  }
+}
+
+loadProfile();
+
+// Handle form submit
+profileForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const name = nameInput.value.trim();
+  const email = emailInput.value.trim();
+  const country = countryInput.value.trim();
+
+  if (!name || !email || !country) {
+    return alert("Please fill all fields");
+  }
+
+  const { data, error } = await supabase
     .from("users")
-    .update({
-      name,
-      email,
-      country
-    })
+    .update({ name, email, country })
     .eq("id", userId);
 
   if (error) {
     console.error(error);
-    alert("Failed to save profile");
-    return;
+    return alert("Failed to save profile");
   }
 
-  location.href = "./store/store.html";
+  alert("Profile saved successfully!");
+  location.href = "./store/store.html"; // Redirect to store after setup
 });
