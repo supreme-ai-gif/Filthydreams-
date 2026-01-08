@@ -1,92 +1,26 @@
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setup Profile - FilthyDreams</title>
+  <link rel="stylesheet" href="../css/profile-setup.css">
+</head>
+<body>
 
-const SUPABASE_URL = window.__ENV__.SUPABASE_URL;
-const SUPABASE_ANON_KEY = window.__ENV__.SUPABASE_ANON_KEY;
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<div class="setup-container">
+  <h1>Complete Your Profile</h1>
+  <p>Fill in your details to continue</p>
 
-const userId = localStorage.getItem("userId");
-if (!userId) {
-  alert("Not logged in");
-  location.href = "../index.html";
-}
+  <form id="profileForm" class="form">
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="email" id="email" placeholder="Email Address" required>
+    <input type="text" id="country" placeholder="Country" required>
+    <button type="submit" class="btn primary">Save Profile</button>
+  </form>
+</div>
 
-const avatarInput = document.getElementById("avatarInput");
-const avatarPreview = document.getElementById("avatarPreview");
-const profileForm = document.getElementById("profileForm");
-const errorMsg = document.getElementById("errorMsg");
-
-// ===== Avatar Preview =====
-avatarInput.addEventListener("change", () => {
-  const file = avatarInput.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = e => {
-    avatarPreview.src = e.target.result;
-  };
-  reader.readAsDataURL(file);
-});
-
-// ===== Save Profile =====
-profileForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  errorMsg.textContent = "";
-
-  const name = document.getElementById("fullName").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const country = document.getElementById("country").value.trim();
-
-  if (!name || !email || !country) {
-    errorMsg.textContent = "All fields are required";
-    return;
-  }
-
-  let avatarUrl = null;
-
-  // Upload avatar if selected
-  if (avatarInput.files[0]) {
-    const file = avatarInput.files[0];
-    const path = `${userId}-${Date.now()}-${file.name}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("user-avatars")
-      .upload(path, file, { cacheControl: "3600", upsert: true });
-
-    if (uploadError) {
-      console.error(uploadError);
-      errorMsg.textContent = "Failed to upload avatar";
-      return;
-    }
-
-    const { data } = supabase.storage.from("user-avatars").getPublicUrl(path);
-    avatarUrl = data.publicUrl;
-  }
-
-  // Update user profile in Supabase
-  const { error } = await supabase
-    .from("users")
-    .update({
-      username: name,
-      email,
-      country,
-      avatar_url: avatarUrl
-    })
-    .eq("id", userId);
-
-  if (error) {
-    console.error(error);
-    errorMsg.textContent = "Failed to save profile";
-    return;
-  }
-
-  // Save to localStorage
-  localStorage.setItem("userProfile", JSON.stringify({
-    name,
-    email,
-    country,
-    avatar: avatarUrl || ""
-  }));
-
-  alert("Profile saved successfully!");
-  location.href = "../store/store.html"; // redirect to store
-});
+<script type="module" src="../js/env.js"></script>
+<script type="module" src="./profile-setup.js"></script>
+</body>
+</html>
