@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Profile Setup</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./css/profile-setup.css">
+  <meta charset="UTF-8" />
+  <title>Profile Setup • FilthyDreams</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="./profile-setup.css">
 </head>
 <body>
-<div class="profile-container">
-  <h1>Profile Setup</h1>
-  <form id="profileForm">
-    <input type="text" id="fullName" placeholder="Full Name" required>
-    <input type="email" id="email" placeholder="Email" required>
-    <input type="text" id="country" placeholder="Country" required>
-    <button type="submit" class="btn primary">Save Profile</button>
-  </form>
-</div>
-<script type="module" src="./profile-setup.js"></script>
+
+  <div class="profile-container">
+    <h1 class="logo">FilthyDreams</h1>
+    <p class="subtitle">Complete your profile</p>
+
+    <form id="profileForm">
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="email" id="email" placeholder="Email address" required />
+      <input type="text" id="country" placeholder="Country" required />
+
+      <button type="submit">Save Profile</button>
+    </form>
+  </div>
+
+  <script src="./profile-setup.js"></script>
 </body>
 </html>
