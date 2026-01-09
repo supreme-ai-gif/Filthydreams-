@@ -110,47 +110,81 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   /* ================= PRODUCTS ================= */
-  async function loadProducts() {
-    adminProducts.innerHTML = `<p class="muted">Loading...</p>`;
+async function loadProducts() {
+  adminProducts.innerHTML = `<p class="muted">Loading...</p>`;
 
-    let query = supabase.from("products").select("*").order("created_at", { ascending: false });
-    if (currentTab !== "all") query = query.eq("tab_id", currentTab);
+  let query = supabase
+    .from("products")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-    const { data, error } = await query;
-    if (error) {
-      console.error("Products error:", error);
-      return;
-    }
-
-    adminProducts.innerHTML = "";
-
-    if (!data || data.length === 0) {
-      adminProducts.innerHTML = `<p class="muted">No products</p>`;
-      return;
-    }
-
-    data.forEach(p => {
-      const card = document.createElement("div");
-      card.className = "product-card";
-      card.innerHTML = `
-        <img src="${p.image_url}">
-        <div class="info">
-          <h4>${p.name}</h4>
-          <span>$${p.price}</span>
-          <small>👀 ${p.views}</small>
-        </div>
-      `;
-
-      let timer;
-      card.addEventListener("mousedown", () => {
-        timer = setTimeout(() => openEditProduct(p), 700);
-      });
-      card.addEventListener("mouseup", () => clearTimeout(timer));
-      card.addEventListener("mouseleave", () => clearTimeout(timer));
-
-      adminProducts.appendChild(card);
-    });
+  if (currentTab !== "all") {
+    query = query.eq("tab_id", currentTab);
   }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("Products error:", error);
+    adminProducts.innerHTML = `<p class="muted">Error loading products</p>`;
+    return;
+  }
+
+  adminProducts.innerHTML = "";
+
+  if (!data || data.length === 0) {
+    adminProducts.innerHTML = `<p class="muted">No products</p>`;
+    return;
+  }
+
+  data.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "product-card";
+
+    card.innerHTML = `
+      <img src="${p.image_url}">
+      <div class="info">
+        <h4>${p.name}</h4>
+        <span>$${p.price}</span>
+        <small>👀 ${p.views}</small>
+
+        <div class="admin-card-actions">
+          <button class="btn danger delete-btn">Delete</button>
+        </div>
+      </div>
+    `;
+
+    /* ===== LONG PRESS → EDIT ===== */
+    let timer;
+    card.addEventListener("mousedown", () => {
+      timer = setTimeout(() => openEditProduct(p), 700);
+    });
+    card.addEventListener("mouseup", () => clearTimeout(timer));
+    card.addEventListener("mouseleave", () => clearTimeout(timer));
+
+    /* ===== DELETE BUTTON ===== */
+    card.querySelector(".delete-btn").addEventListener("click", async (e) => {
+      e.stopPropagation(); // prevent triggering long press
+
+      if (!confirm(`Delete "${p.name}"?`)) return;
+
+      const { error } = await supabase
+        .from("products")
+        .delete()
+        .eq("id", p.id);
+
+      if (error) {
+        alert("Failed to delete product");
+        console.error(error);
+        return;
+      }
+
+      card.remove(); // instant UI feedback
+    });
+
+    adminProducts.appendChild(card);
+  });
+          }
 
   /* ================= CREATE TAB ================= */
   createTabBtn?.addEventListener("click", () => {
