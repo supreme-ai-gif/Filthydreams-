@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   /* ================= AUTH ================= */
   if (localStorage.getItem("isAdmin") !== "true") {
-    location.href = "../login.html";
+    location.href = "../index.html";
     return;
   }
 
