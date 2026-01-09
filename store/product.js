@@ -1,4 +1,4 @@
-cart { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+cartart{ createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 const supabase = createClient(
   window.__ENV__.SUPABASE_URL,
@@ -71,7 +71,7 @@ addBtn.addEventListener("click", async () => {
     // 2️⃣ If exists → update quantity
     if (existingItem) {
       const { error: updateError } = await supabase
-        .from("cart")
+        .from("cart-items")
         .update({ quantity: existingItem.quantity + 1 })
         .eq("id", existingItem.id);
 
@@ -80,7 +80,7 @@ addBtn.addEventListener("click", async () => {
     // 3️⃣ Else → insert new
     else {
       const { error: insertError } = await supabase
-        .from("cart")
+        .from("cart-items")
         .insert({
           user_id: userId,
           product_id: data.id,
