@@ -134,3 +134,12 @@ input:focus, textarea:focus, select:focus {
   outline: none;
   border-color: orange;
 }
+.admin-card-actions {
+  margin-top: 10px;
+}
+
+.admin-card-actions .delete-btn {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+}
