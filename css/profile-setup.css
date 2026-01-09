@@ -1,50 +1,72 @@
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
 body {
-  font-family: "Segoe UI", sans-serif;
-  background: #f6f6f6;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
   margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #ff7a00, #ffb347);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-container {
-  background: white;
-  padding: 30px;
+  background: #fff;
+  padding: 40px;
+  width: 100%;
+  max-width: 380px;
   border-radius: 16px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-  width: 100%;
-  max-width: 400px;
-}
-
-.profile-container h1 {
+  box-shadow: 0 20px 45px rgba(0,0,0,0.2);
   text-align: center;
-  margin-bottom: 20px;
-  color: orange;
 }
 
-.profile-container input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border-radius: 8px;
+.logo {
+  font-size: 28px;
+  font-weight: 800;
+  color: #ff7a00;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 30px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+input {
+  padding: 14px;
+  border-radius: 12px;
   border: 1px solid #ddd;
-  outline: none;
+  font-size: 15px;
 }
 
-.profile-container button {
-  width: 100%;
+input:focus {
+  outline: none;
+  border-color: #ff7a00;
+}
+
+button {
+  margin-top: 10px;
   padding: 14px;
   border: none;
-  background: orange;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #ff7a00, #ff9f43);
   color: white;
   font-size: 16px;
-  border-radius: 10px;
+  font-weight: 600;
   cursor: pointer;
   transition: transform .2s, box-shadow .2s;
 }
 
-.profile-container button:hover {
+button:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(255,122,0,0.4);
 }
