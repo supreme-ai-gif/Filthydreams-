@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   /* ================= LOGOUT ================= */
   logoutBtn?.addEventListener("click", () => {
     localStorage.clear();
-    location.href = "../login.html";
+    location.href = "../index.html";
   });
 
   /* ================= TABS ================= */
