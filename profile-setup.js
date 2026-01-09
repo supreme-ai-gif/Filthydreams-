@@ -29,5 +29,5 @@ setupForm.addEventListener("submit", (e) => {
   alert("Profile saved successfully!");
 
   // Redirect to store only once
-  location.href = "./store.html";
+  location.href = "../store/store.html";
 });
