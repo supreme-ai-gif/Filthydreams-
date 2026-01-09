@@ -1,25 +1,21 @@
-// profile.js - display user profile
-const userId = localStorage.getItem("userId");
-if (!userId) {
-  alert("Please login first");
-  location.href = "../index.html";
+// Load profile from localStorage
+const profileName = document.getElementById("profileName");
+const profileEmail = document.getElementById("profileEmail");
+const profileCountry = document.getElementById("profileCountry");
+const backBtn = document.getElementById("backBtn");
+
+const profile = JSON.parse(localStorage.getItem("userProfile") || "{}");
+
+if (!profile.name || !profile.email || !profile.country) {
+  alert("Profile incomplete. Redirecting to profile setup.");
+  location.href = "./profile-setup.html";
+} else {
+  profileName.textContent = profile.name;
+  profileEmail.textContent = profile.email;
+  profileCountry.textContent = profile.country;
 }
 
-// Get profile info from localStorage
-const profile = JSON.parse(localStorage.getItem("profile") || "{}");
-
-// Elements
-const nameEl = document.getElementById("profileName");
-const emailEl = document.getElementById("profileEmail");
-const countryEl = document.getElementById("profileCountry");
-
-// Display profile
-if (profile.name) nameEl.textContent = profile.name;
-if (profile.email) emailEl.textContent = profile.email;
-if (profile.country) countryEl.textContent = profile.country;
-
-// Back button
-const backBtn = document.getElementById("backBtn");
+// Back to store
 backBtn.addEventListener("click", () => {
   location.href = "./store.html";
 });
