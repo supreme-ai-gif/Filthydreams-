@@ -1,4 +1,4 @@
-cartart{ createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 const supabase = createClient(
   window.__ENV__.SUPABASE_URL,
@@ -47,52 +47,58 @@ async function loadProduct() {
     </section>
   `;
 
-  // ===== CONNECT "ADD TO CART" =====
-const addBtn = container.querySelector(".buy-btn");
-addBtn.addEventListener("click", async () => {
-  const userId = localStorage.getItem("userId"); // UUID string
+  /* =========================
+     ADD TO CART (NO AUTH)
+  ========================= */
+  const addBtn = container.querySelector(".buy-btn");
 
-  if (!userId) {
-    alert("Please login first");
-    return;
-  }
+  addBtn.addEventListener("click", async () => {
+    const userId = localStorage.getItem("userId"); // must be UUID
 
-  try {
-    // 1️⃣ Check if already in cart
-    const { data: existingItem, error: fetchError } = await supabase
-      .from("cart-items")
-      .select("id, quantity")
-      .eq("user_id", userId)
-      .eq("product_id", data.id)
-      .maybeSingle();
-
-    if (fetchError) throw fetchError;
-
-    // 2️⃣ If exists → update quantity
-    if (existingItem) {
-      const { error: updateError } = await supabase
-        .from("cart-items")
-        .update({ quantity: existingItem.quantity + 1 })
-        .eq("id", existingItem.id);
-
-      if (updateError) throw updateError;
-    } 
-    // 3️⃣ Else → insert new
-    else {
-      const { error: insertError } = await supabase
-        .from("cart-items")
-        .insert({
-          user_id: userId,
-          product_id: data.id,
-          quantity: 1
-        });
-
-      if (insertError) throw insertError;
+    if (!userId) {
+      alert("Please login first");
+      return;
     }
 
-    alert("Added to cart!");
-  } catch (err) {
-    console.error("Add to cart error:", err);
-    alert("Failed to add to cart");
-  }
-});
+    try {
+      // Check if item already exists
+      const { data: existing, error: fetchError } = await supabase
+        .from("cart_items")
+        .select("id, quantity")
+        .eq("user_id", userId)
+        .eq("product_id", data.id)
+        .maybeSingle();
+
+      if (fetchError) throw fetchError;
+
+      // If exists → update quantity
+      if (existing) {
+        const { error: updateError } = await supabase
+          .from("cart_items")
+          .update({ quantity: existing.quantity + 1 })
+          .eq("id", existing.id);
+
+        if (updateError) throw updateError;
+      } 
+      // Else → insert new row
+      else {
+        const { error: insertError } = await supabase
+          .from("cart_items")
+          .insert({
+            user_id: userId,
+            product_id: data.id,
+            quantity: 1
+          });
+
+        if (insertError) throw insertError;
+      }
+
+      alert("Added to cart!");
+    } catch (err) {
+      console.error("Cart error:", err);
+      alert("Failed to add to cart");
+    }
+  });
+}
+
+loadProduct();
