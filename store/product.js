@@ -48,32 +48,51 @@ async function loadProduct() {
   `;
 
   // ===== CONNECT "ADD TO CART" =====
-  const addBtn = container.querySelector(".buy-btn");
-  addBtn.addEventListener("click", async () => {
-    const userId = localStorage.getItem("userId"); // must be set on login/profile-setup
-    if (!userId) return alert("Please login first");
+const addBtn = container.querySelector(".buy-btn");
+addBtn.addEventListener("click", async () => {
+  const userId = localStorage.getItem("userId"); // UUID string
 
-    try {
-      // Add or update cart
-      const { error: upsertError } = await supabase
+  if (!userId) {
+    alert("Please login first");
+    return;
+  }
+
+  try {
+    // 1️⃣ Check if already in cart
+    const { data: existingItem, error: fetchError } = await supabase
+      .from("cart")
+      .select("id, quantity")
+      .eq("user_id", userId)
+      .eq("product_id", data.id)
+      .maybeSingle();
+
+    if (fetchError) throw fetchError;
+
+    // 2️⃣ If exists → update quantity
+    if (existingItem) {
+      const { error: updateError } = await supabase
         .from("cart")
-        .upsert(
-          {
-            user_id: userId,
-            product_id: data.id,
-            quantity: 1,
-          },
-          { onConflict: ["user_id", "product_id"] }
-        );
+        .update({ quantity: existingItem.quantity + 1 })
+        .eq("id", existingItem.id);
 
-      if (upsertError) throw upsertError;
+      if (updateError) throw updateError;
+    } 
+    // 3️⃣ Else → insert new
+    else {
+      const { error: insertError } = await supabase
+        .from("cart")
+        .insert({
+          user_id: userId,
+          product_id: data.id,
+          quantity: 1
+        });
 
-      alert("Added to cart!");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to add to cart");
+      if (insertError) throw insertError;
     }
-  });
-}
 
-loadProduct();
+    alert("Added to cart!");
+  } catch (err) {
+    console.error("Add to cart error:", err);
+    alert("Failed to add to cart");
+  }
+});
