@@ -1,44 +1,38 @@
+// Get userId from localStorage (set during registration/login)
+const userId = localStorage.getItem("userId");
+if (!userId) {
+  alert("Please login first");
+  location.href = "../index.html"; // redirect if not logged in
+}
+
+// Form elements
 const form = document.getElementById("profileForm");
-const usernameInput = document.getElementById("username");
+const nameInput = document.getElementById("name");
 const emailInput = document.getElementById("email");
 const countryInput = document.getElementById("country");
 
-// Must be logged in
-const userId = localStorage.getItem("userId");
-if (!userId) {
-  alert("Not logged in");
-  location.href = "./index.html";
-}
+// Pre-fill form if profile exists
+const savedProfile = JSON.parse(localStorage.getItem("profile") || "{}");
+if (savedProfile.name) nameInput.value = savedProfile.name;
+if (savedProfile.email) emailInput.value = savedProfile.email;
+if (savedProfile.country) countryInput.value = savedProfile.country;
 
-// Prefill if exists
-const existingProfile = JSON.parse(localStorage.getItem("userProfile"));
-if (existingProfile) {
-  usernameInput.value = existingProfile.username || "";
-  emailInput.value = existingProfile.email || "";
-  countryInput.value = existingProfile.country || "";
-}
-
-form.addEventListener("submit", (e) => {
+// Save profile on submit
+form.addEventListener("submit", e => {
   e.preventDefault();
 
-  const profile = {
-    userId,
-    username: usernameInput.value.trim(),
-    email: emailInput.value.trim(),
-    country: countryInput.value.trim(),
-    completed: true
-  };
+  const name = nameInput.value.trim();
+  const email = emailInput.value.trim();
+  const country = countryInput.value.trim();
 
-  if (!profile.username || !profile.email || !profile.country) {
-    alert("Please fill all fields");
+  if (!name || !email || !country) {
+    alert("All fields are required");
     return;
   }
 
-  // SAVE PROFILE
-  localStorage.setItem("userProfile", JSON.stringify(profile));
+  // Save to localStorage
+  localStorage.setItem("profile", JSON.stringify({ name, email, country }));
 
   alert("Profile saved successfully!");
-
-  // IMPORTANT: GO TO STORE (NO LOOP)
-  location.replace("./store/store.html");
+  location.href = "./store.html"; // go to store
 });
