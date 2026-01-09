@@ -47,57 +47,21 @@ async function loadProduct() {
     </section>
   `;
 
-  /* =========================
-     ADD TO CART (NO AUTH)
-  ========================= */
+  // ===== ADD TO CART USING LOCALSTORAGE =====
   const addBtn = container.querySelector(".buy-btn");
+  addBtn.addEventListener("click", () => {
+    let cart = JSON.parse(localStorage.getItem("cartItems") || "[]");
 
-  addBtn.addEventListener("click", async () => {
-    const userId = localStorage.getItem("userId"); // must be UUID
-
-    if (!userId) {
-      alert("Please login first");
-      return;
+    // Check if product already in cart
+    const existingIndex = cart.findIndex(item => item.id === data.id);
+    if (existingIndex > -1) {
+      cart[existingIndex].quantity += 1;
+    } else {
+      cart.push({ id: data.id, quantity: 1 });
     }
 
-    try {
-      // Check if item already exists
-      const { data: existing, error: fetchError } = await supabase
-        .from("cart_items")
-        .select("id, quantity")
-        .eq("user_id", userId)
-        .eq("product_id", data.id)
-        .maybeSingle();
-
-      if (fetchError) throw fetchError;
-
-      // If exists → update quantity
-      if (existing) {
-        const { error: updateError } = await supabase
-          .from("cart_items")
-          .update({ quantity: existing.quantity + 1 })
-          .eq("id", existing.id);
-
-        if (updateError) throw updateError;
-      } 
-      // Else → insert new row
-      else {
-        const { error: insertError } = await supabase
-          .from("cart_items")
-          .insert({
-            user_id: userId,
-            product_id: data.id,
-            quantity: 1
-          });
-
-        if (insertError) throw insertError;
-      }
-
-      alert("Added to cart!");
-    } catch (err) {
-      console.error("Cart error:", err);
-      alert("Failed to add to cart");
-    }
+    localStorage.setItem("cartItems", JSON.stringify(cart));
+    alert("Added to cart!");
   });
 }
 
