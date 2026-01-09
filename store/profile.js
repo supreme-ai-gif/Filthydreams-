@@ -6,20 +6,22 @@ const backBtn = document.getElementById("backBtn");
 
 // Load profile from localStorage
 const profileJSON = localStorage.getItem("userProfile");
-if (!profileJSON) {
-  // No profile at all → redirect to setup
-  alert("No profile found. Redirecting to profile setup.");
-  location.href = "../profile-setup.html";
-} else {
+
+if (profileJSON) {
   const profile = JSON.parse(profileJSON);
 
-  // Display values (use fallback text if missing)
+  // Display values with fallback
   profileName.textContent = profile.name || "Not provided";
   profileEmail.textContent = profile.email || "Not provided";
   profileCountry.textContent = profile.country || "Not provided";
+} else {
+  // If nothing is in localStorage, just show default text
+  profileName.textContent = "Not provided";
+  profileEmail.textContent = "Not provided";
+  profileCountry.textContent = "Not provided";
 }
 
-// Back to store
+// Back button
 backBtn.addEventListener("click", () => {
   location.href = "./store.html";
 });
