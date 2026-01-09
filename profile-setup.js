@@ -1,38 +1,33 @@
-// Get userId from localStorage (set during registration/login)
-const userId = localStorage.getItem("userId");
-if (!userId) {
-  alert("Please login first");
-  location.href = "../index.html"; // redirect if not logged in
-}
-
-// Form elements
-const form = document.getElementById("profileForm");
+// Elements
+const setupForm = document.getElementById("profileSetupForm");
 const nameInput = document.getElementById("name");
 const emailInput = document.getElementById("email");
 const countryInput = document.getElementById("country");
 
-// Pre-fill form if profile exists
-const savedProfile = JSON.parse(localStorage.getItem("profile") || "{}");
-if (savedProfile.name) nameInput.value = savedProfile.name;
-if (savedProfile.email) emailInput.value = savedProfile.email;
-if (savedProfile.country) countryInput.value = savedProfile.country;
+// Load existing profile if any
+const existingProfile = localStorage.getItem("userProfile");
+if (existingProfile) {
+  const profile = JSON.parse(existingProfile);
+  nameInput.value = profile.name || "";
+  emailInput.value = profile.email || "";
+  countryInput.value = profile.country || "";
+}
 
 // Save profile on submit
-form.addEventListener("submit", e => {
+setupForm.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const name = nameInput.value.trim();
-  const email = emailInput.value.trim();
-  const country = countryInput.value.trim();
-
-  if (!name || !email || !country) {
-    alert("All fields are required");
-    return;
-  }
+  const profile = {
+    name: nameInput.value.trim(),
+    email: emailInput.value.trim(),
+    country: countryInput.value.trim()
+  };
 
   // Save to localStorage
-  localStorage.setItem("profile", JSON.stringify({ name, email, country }));
+  localStorage.setItem("userProfile", JSON.stringify(profile));
 
   alert("Profile saved successfully!");
-  location.href = "../store/store.html"; // go to store
+
+  // Redirect to store
+  location.href = "./store.html";
 });
