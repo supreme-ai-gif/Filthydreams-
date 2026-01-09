@@ -2,43 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Profile • FilthyDreams</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <title>My Profile - FilthyDreams</title>
   <link rel="stylesheet" href="./profile.css">
 </head>
 <body>
 
-<header class="profile-header">
-  <button id="backBtn">← Store</button>
-  <h1>My Profile</h1>
-</header>
+  <div class="profile-page">
+    <button id="backBtn" class="back-btn">← Back to Store</button>
 
-<main class="profile-card">
-  <div class="avatar">
-    <span>👤</span>
-  </div>
-
-  <div class="info">
-    <div class="row">
-      <label>Username</label>
-      <p id="username"></p>
-    </div>
-
-    <div class="row">
-      <label>Email</label>
-      <p id="email"></p>
-    </div>
-
-    <div class="row">
-      <label>Country</label>
-      <p id="country"></p>
+    <div class="profile-card">
+      <h1>My Profile</h1>
+      <div class="profile-info">
+        <p><strong>Name:</strong> <span id="profileName">Loading...</span></p>
+        <p><strong>Email:</strong> <span id="profileEmail">Loading...</span></p>
+        <p><strong>Country:</strong> <span id="profileCountry">Loading...</span></p>
+      </div>
     </div>
   </div>
 
-  <button id="logoutBtn" class="logout">Logout</button>
-</main>
-
-<script src="./profile.js"></script>
+  <script type="module" src="./profile.js"></script>
 </body>
 </html>
