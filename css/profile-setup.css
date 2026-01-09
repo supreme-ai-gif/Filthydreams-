@@ -1,72 +1,100 @@
+/* =========================
+   RESET / BASE
+========================= */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
   font-family: "Segoe UI", system-ui, sans-serif;
 }
 
 body {
-  margin: 0;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #ff7a00, #ffb347);
+  background: #f6f6f6;
+  color: #222;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
+/* =========================
+   PROFILE CONTAINER
+========================= */
 .profile-container {
-  background: #fff;
-  padding: 40px;
-  width: 100%;
-  max-width: 380px;
+  background: white;
+  padding: 40px 30px;
   border-radius: 16px;
-  box-shadow: 0 20px 45px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.1);
   text-align: center;
 }
 
-.logo {
-  font-size: 28px;
-  font-weight: 800;
-  color: #ff7a00;
-  margin-bottom: 5px;
+.profile-container h1 {
+  font-size: 26px;
+  margin-bottom: 10px;
+  color: orange;
 }
 
-.subtitle {
+.profile-container p {
   font-size: 14px;
   color: #666;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
-form {
+/* =========================
+   FORM
+========================= */
+.profile-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 15px;
 }
 
-input {
-  padding: 14px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  font-size: 15px;
+.profile-form label {
+  text-align: left;
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: #333;
 }
 
-input:focus {
+.profile-form input {
+  padding: 12px 15px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
   outline: none;
-  border-color: #ff7a00;
+  font-size: 15px;
+  transition: border 0.2s;
 }
 
-button {
-  margin-top: 10px;
-  padding: 14px;
-  border: none;
-  border-radius: 30px;
+.profile-form input:focus {
+  border-color: orange;
+}
+
+/* =========================
+   BUTTON
+========================= */
+.btn.save-btn {
   background: linear-gradient(135deg, #ff7a00, #ff9f43);
   color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 30px;
   font-size: 16px;
-  font-weight: 600;
   cursor: pointer;
-  transition: transform .2s, box-shadow .2s;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-button:hover {
+.btn.save-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(255,122,0,0.4);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 500px) {
+  .profile-container {
+    padding: 30px 20px;
+  }
 }
