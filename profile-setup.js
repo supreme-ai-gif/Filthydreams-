@@ -34,5 +34,5 @@ form.addEventListener("submit", e => {
   localStorage.setItem("profile", JSON.stringify({ name, email, country }));
 
   alert("Profile saved successfully!");
-  location.href = "./store/store.html"; // go to store
+  location.href = "../store/store.html"; // go to store
 });
