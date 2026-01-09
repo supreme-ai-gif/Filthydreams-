@@ -8,7 +8,7 @@ const profile = JSON.parse(localStorage.getItem("userProfile") || "{}");
 
 if (!profile.name || !profile.email || !profile.country) {
   alert("Profile incomplete. Redirecting to profile setup.");
-  location.href = "./profile-setup.html";
+  location.href = "../profile-setup.html";
 } else {
   profileName.textContent = profile.name;
   profileEmail.textContent = profile.email;
