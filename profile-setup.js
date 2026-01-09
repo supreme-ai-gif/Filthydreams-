@@ -1,36 +1,44 @@
-// Elements
-const profileForm = document.getElementById("profileForm");
+const form = document.getElementById("profileForm");
 const usernameInput = document.getElementById("username");
 const emailInput = document.getElementById("email");
 const countryInput = document.getElementById("country");
 
-// Prefill if localStorage already has data
-const savedProfile = JSON.parse(localStorage.getItem("userProfile"));
-if (savedProfile) {
-  if (savedProfile.username) usernameInput.value = savedProfile.username;
-  if (savedProfile.email) emailInput.value = savedProfile.email;
-  if (savedProfile.country) countryInput.value = savedProfile.country;
+// Must be logged in
+const userId = localStorage.getItem("userId");
+if (!userId) {
+  alert("Not logged in");
+  location.href = "./index.html";
 }
 
-// On submit
-profileForm.addEventListener("submit", (e) => {
+// Prefill if exists
+const existingProfile = JSON.parse(localStorage.getItem("userProfile"));
+if (existingProfile) {
+  usernameInput.value = existingProfile.username || "";
+  emailInput.value = existingProfile.email || "";
+  countryInput.value = existingProfile.country || "";
+}
+
+form.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  const profileData = {
+  const profile = {
+    userId,
     username: usernameInput.value.trim(),
     email: emailInput.value.trim(),
     country: countryInput.value.trim(),
+    completed: true
   };
 
-  if (!profileData.username || !profileData.email || !profileData.country) {
-    return alert("Please fill all fields!");
+  if (!profile.username || !profile.email || !profile.country) {
+    alert("Please fill all fields");
+    return;
   }
 
-  // Save to localStorage
-  localStorage.setItem("userProfile", JSON.stringify(profileData));
+  // SAVE PROFILE
+  localStorage.setItem("userProfile", JSON.stringify(profile));
 
   alert("Profile saved successfully!");
 
-  // Redirect to store
-  location.href = "./store/store.html";
+  // IMPORTANT: GO TO STORE (NO LOOP)
+  location.replace("./store/store.html");
 });
