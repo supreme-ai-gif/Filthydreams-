@@ -1,30 +1,25 @@
-const backBtn = document.getElementById("backBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-
-const usernameEl = document.getElementById("username");
-const emailEl = document.getElementById("email");
-const countryEl = document.getElementById("country");
-
-// Must be logged in
-const profile = JSON.parse(localStorage.getItem("userProfile"));
+// profile.js - display user profile
 const userId = localStorage.getItem("userId");
-
-if (!profile || !userId) {
+if (!userId) {
+  alert("Please login first");
   location.href = "../index.html";
 }
 
-// Fill UI
-usernameEl.textContent = profile.username;
-emailEl.textContent = profile.email;
-countryEl.textContent = profile.country;
+// Get profile info from localStorage
+const profile = JSON.parse(localStorage.getItem("profile") || "{}");
 
-// Back to store
-backBtn.onclick = () => {
+// Elements
+const nameEl = document.getElementById("profileName");
+const emailEl = document.getElementById("profileEmail");
+const countryEl = document.getElementById("profileCountry");
+
+// Display profile
+if (profile.name) nameEl.textContent = profile.name;
+if (profile.email) emailEl.textContent = profile.email;
+if (profile.country) countryEl.textContent = profile.country;
+
+// Back button
+const backBtn = document.getElementById("backBtn");
+backBtn.addEventListener("click", () => {
   location.href = "./store.html";
-};
-
-// Logout
-logoutBtn.onclick = () => {
-  localStorage.clear();
-  location.href = "../index.html";
-};
+});
