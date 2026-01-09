@@ -1,4 +1,4 @@
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+cart { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 const supabase = createClient(
   window.__ENV__.SUPABASE_URL,
@@ -60,7 +60,7 @@ addBtn.addEventListener("click", async () => {
   try {
     // 1️⃣ Check if already in cart
     const { data: existingItem, error: fetchError } = await supabase
-      .from("cart")
+      .from("cart-items")
       .select("id, quantity")
       .eq("user_id", userId)
       .eq("product_id", data.id)
