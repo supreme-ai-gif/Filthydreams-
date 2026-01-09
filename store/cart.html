@@ -2,26 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Your Cart</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <title>FilthyDreams Cart</title>
   <link rel="stylesheet" href="./cart.css">
 </head>
 <body>
 
-<header>
-  <button id="backBtn">← Store</button>
-  <h2>Your Cart</h2>
+<header class="cart-header">
+  <button id="backBtn">← Back to Store</button>
+  <h1>My Cart</h1>
 </header>
 
-<main id="cartContainer"></main>
+<main id="cartContainer" class="cart-container">
+  <!-- Products will be loaded here -->
+</main>
 
-<footer>
-  <span>Total: <strong id="total">$0.00</strong></span>
-  <button id="checkoutBtn">Checkout</button>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./cart.js"></script>
+<script type="module" src="../js/env.js"></script>
+<script type="module" src="./cart.js"></script>
 </body>
 </html>
